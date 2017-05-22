@@ -6,7 +6,7 @@
  * @author 
  *
  */
-public class Books {
+public class Book {
 	
 	private String name;
 
