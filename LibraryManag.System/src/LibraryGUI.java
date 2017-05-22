@@ -1,23 +1,17 @@
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Color;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.ActionEvent;
-import java.awt.Font;
-import javax.swing.JFormattedTextField;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
+import javax.swing.JTextField;
 
 /**
  * @author Peter Bessada
@@ -172,6 +166,7 @@ public class LibraryGUI {
 	public void inputListener(){  // do what inside inputListener when Login is pressed 
 		String email = textField.getText().toLowerCase(); // put the input email String to a lower case
 		textField.setText("");
+		@SuppressWarnings("deprecation")
 		String password = passwordField.getText();
 		Member m = new Member(email,password);
 		

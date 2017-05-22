@@ -8,6 +8,7 @@ import javax.swing.JPanel;
  * @author Peter
  *
  */
+@SuppressWarnings("serial")
 public class AdminGUI extends JPanel {
 
 	/**

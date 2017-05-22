@@ -7,7 +7,7 @@ import org.junit.Test;
  */
 
 /**
- * @author 
+ * @author
  *
  */
 public class AdminTest {
