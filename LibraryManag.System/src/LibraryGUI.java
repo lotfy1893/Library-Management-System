@@ -20,7 +20,15 @@ import javax.swing.JTextField;
 public class LibraryGUI {
 	
 
-
+	/**
+	 *member repo is responsible for all the database storage and
+	 *retrieval operations instead of implementing scattered queries everywhere
+	 *around the code
+	 *@author Praktikant05 
+	 */
+	private MemberRepository memberRepository = new MemberRepository();
+	
+	
 	private JFrame frmLibraryManagementSystem;
 	private JTextField textField;
 	private JPasswordField passwordField;
@@ -176,13 +184,13 @@ public class LibraryGUI {
 			panel.repaint();	
 		}
 		
-		else if(m.isAdmin(email, password)){
+		else if(m.isAdmin()){
 			//view el admin Panel
 		
 		}
 		
-		else if(m.isMemberExists(email,password)){
-			if(m.isPasswordCorrect(email,password)){
+		else if(memberRepository.isMemberExists(email)){
+			if(memberRepository.passwordMatchesForLogin(email, password)){
 				// switch to the Book Frame 
 				
 
