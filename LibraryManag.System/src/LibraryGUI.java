@@ -1,41 +1,39 @@
-import java.awt.Color;
 import java.awt.EventQueue;
-import java.awt.Font;
-import java.awt.event.ActionEvent;
+
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
-import javax.swing.JButton;
-import javax.swing.JFrame;
+import java.awt.event.ActionEvent;
+import java.awt.Font;
+import javax.swing.JFormattedTextField;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JTextField;
+import javax.swing.JList;
 
 /**
  * @author Peter Bessada
  *
  */
 public class LibraryGUI {
-	
 
-	/**
-	 *member repo is responsible for all the database storage and
-	 *retrieval operations instead of implementing scattered queries everywhere
-	 *around the code
-	 *@author Praktikant05 
-	 */
-	private MemberRepository memberRepository = new MemberRepository();
-	
-	
 	private JFrame frmLibraryManagementSystem;
-	private JTextField textField;
+	private JTextField textField_Email;
 	private JPasswordField passwordField;
 	private JPanel panel = new JPanel();
 	private JPanel panel11 = new JPanel();
-	private JLabel lblNewLabel_4 = new JLabel("Invalid Email or Password, Please try again.");
+	private JLabel lblLabel_Invalid = new JLabel("Invalid Email or Password, Please try again.");
 	static LibraryGUI window = new LibraryGUI();
+	private JTextField textField_FullName;
 
 	/**
 	 * Launch the application.
@@ -44,7 +42,7 @@ public class LibraryGUI {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					//LibraryGUI window = new LibraryGUI();
+					// LibraryGUI window = new LibraryGUI();
 					window.frmLibraryManagementSystem.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -62,6 +60,7 @@ public class LibraryGUI {
 
 	/**
 	 * Initialize the contents of the frame.
+	 * 
 	 * @wbp.parser.entryPoint
 	 */
 	private void initialize() {
@@ -71,93 +70,89 @@ public class LibraryGUI {
 		frmLibraryManagementSystem.getContentPane().setBackground(new Color(51, 102, 102));
 		frmLibraryManagementSystem.getContentPane().setLayout(null);
 
-		
-		
 		panel11.setBackground(new Color(51, 102, 102));
-		
 		panel11.setBounds(0, 0, 950, 575);
 		panel11.setLayout(null);
-	
 		panel11.add(panel);
-		
-		
-		JLabel lblNewLabel_2 = new JLabel("Library Management System");
-		lblNewLabel_2.setForeground(new Color(51, 204, 0));
-		lblNewLabel_2.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 34));
-		lblNewLabel_2.setBounds(218, 43, 492, 57);
 
-	
-		
-		panel11.add(lblNewLabel_2);
-		
+		JLabel lblLabel_Title = new JLabel("Library Management System");
+		lblLabel_Title.setForeground(new Color(51, 204, 0));
+		lblLabel_Title.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 34));
+		lblLabel_Title.setBounds(218, 43, 492, 57);
+		panel11.add(lblLabel_Title);
+
 		frmLibraryManagementSystem.setBounds(100, 100, 956, 604);
 		frmLibraryManagementSystem.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-		
 		panel.setBackground(new Color(51, 153, 153));
 		panel.setBounds(153, 137, 651, 339);
-		frmLibraryManagementSystem.getContentPane().add(panel11); 
-	 	panel.setLayout(null);
-		
-		
-		
-		
+		frmLibraryManagementSystem.getContentPane().add(panel11);
+		panel.setLayout(null);
 
-		JLabel lblNewLabel_1 = new JLabel("LOGIN");
-		lblNewLabel_1.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 26));
-		lblNewLabel_1.setBounds(32, 44, 198, 62);
-		panel.add(lblNewLabel_1);
+		JLabel lblLabel_LOGIN = new JLabel("LOGIN");
+		lblLabel_LOGIN.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 26));
+		lblLabel_LOGIN.setBounds(32, 44, 198, 62);
+		panel.add(lblLabel_LOGIN);
 
-		JLabel lblNewLabel = new JLabel("Email");
-		lblNewLabel.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblNewLabel.setBounds(32, 146, 147, 20);
-		panel.add(lblNewLabel);
-	
+		lblLabel_Invalid.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblLabel_Invalid.setForeground(new Color(204, 0, 0));
+		lblLabel_Invalid.setBounds(106, 100, 421, 35);
+		panel.add(lblLabel_Invalid);
+		lblLabel_Invalid.setVisible(false);
 
-		textField = new JTextField();
-		textField.setBounds(106, 143, 465, 29);
-		panel.add(textField);
-		textField.setColumns(10);
+		JLabel lblLabel_FullName = new JLabel("Full Name");
+		lblLabel_FullName.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblLabel_FullName.setBounds(32, 144, 147, 20);
+		panel.add(lblLabel_FullName);
+
+		textField_FullName = new JTextField();
+		textField_FullName.setColumns(10);
+		textField_FullName.setBounds(106, 137, 465, 29);
+		panel.add(textField_FullName);
+
+		JLabel lblLabel_Email = new JLabel("Email");
+		lblLabel_Email.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblLabel_Email.setBounds(32, 180, 147, 20);
+		panel.add(lblLabel_Email);
+
+		textField_Email = new JTextField();
+		textField_Email.setBounds(106, 177, 465, 29);
+		panel.add(textField_Email);
+		textField_Email.setColumns(10);
 
 		JLabel lblPassword = new JLabel("Password");
 		lblPassword.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblPassword.setBounds(32, 186, 147, 20);
+		lblPassword.setBounds(32, 220, 147, 20);
 		panel.add(lblPassword);
-		
-		passwordField = new JPasswordField();
-		passwordField.setBounds(106, 183, 465, 29);
-		panel.add(passwordField);
-	//	passwordField.getText();
-		
 
-		JButton btnNewButton = new JButton("Login");
-		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 12));
-		btnNewButton.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) { 
-				inputListener();// call inputListener when "Login" button is pressed
+		passwordField = new JPasswordField();
+		passwordField.setBounds(106, 217, 465, 29);
+		panel.add(passwordField);
+		// passwordField.getText();
+
+		JButton btn_Login = new JButton("Login");
+		btn_Login.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		btn_Login.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				inputListenerForLoginButton();// call
+												// inputListenerForLoginButton
+												// method when "Login" button is
+												// pressed
 			}
 		});
-		btnNewButton.setBounds(106, 241, 465, 29);
-		panel.add(btnNewButton);
+		btn_Login.setBounds(106, 268, 465, 29);
+		panel.add(btn_Login);
 
-		JLabel lblNewLabel_3 = new JLabel("Login as Vistor");
-		lblNewLabel_3.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblNewLabel_3.setBounds(475, 281, 147, 20);
-		panel.add(lblNewLabel_3);
-		
-		
-	
-		lblNewLabel_4.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblNewLabel_4.setForeground(new Color(204, 0, 0));
-		lblNewLabel_4.setBounds(106, 100, 421, 35);
-		panel.add(lblNewLabel_4);
-		lblNewLabel_4.setVisible(false);
-		
-		
+		JLabel lblLable_Visitor = new JLabel("Login as Vistor");
+		lblLable_Visitor.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblLable_Visitor.setBounds(475, 308, 147, 20);
+		panel.add(lblLable_Visitor);
 
 		
-		// if I pressed "Login as Vistor" Label--> then I will open the books frame
-		lblNewLabel_3.addMouseListener(new MouseAdapter() {
+		
+		// if I pressed "Login as Vistor" Label--> then I will open the books
+		// TODO switch to the Vistor View
+		lblLable_Visitor.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				// open the vistor view frame
 				BooksGUI p = new BooksGUI();
@@ -170,41 +165,57 @@ public class LibraryGUI {
 		});
 
 	}
-	
-	public void inputListener(){  // do what inside inputListener when Login is pressed 
-		String email = textField.getText().toLowerCase(); // put the input email String to a lower case
-		textField.setText("");
-		@SuppressWarnings("deprecation")
-		String password = passwordField.getText();
-		Member m = new Member(email,password);
-		
-		if(!m.isEmailFormatCorrect(email) || password.equals("")){
-			lblNewLabel_4.setVisible(true);
-			panel.revalidate();
-			panel.repaint();	
-		}
-		
-		else if(m.isAdmin()){
-			//view el admin Panel
-		
-		}
-		
-		else if(memberRepository.isMemberExists(email)){
-			if(memberRepository.passwordMatchesForLogin(email, password)){
-				// switch to the Book Frame 
-				
 
-			}else {
-				lblNewLabel_4.setVisible(true);
-				panel.revalidate();
-				panel.repaint();	
-			}
-				
-		} else {
-			// if it's  not a member then add the member to the database (adding takes place in member class)
-		
-			
+	public void inputListenerForLoginButton() { // do what inside inputListener
+												// when Login is pressed
+
+		String email = textField_Email.getText().toLowerCase(); // put the input
+																// email String
+																// to a lower
+																// case
+		textField_Email.setText("");
+
+		String fullName = textField_FullName.getText(); // Full name
+		textField_FullName.setText("");
+
+		String password = passwordField.getText();
+		passwordField.setText("");
+
+		Member m = new Member(email, password);
+
+		if (!m.isEmailFormatCorrect(email) || password.equals("")) {
+			lblLabel_Invalid.setVisible(true);
+			panel.revalidate();
+			panel.repaint();
 		}
-	
+
+		else if (m.isAdmin(email, password)) {
+			// view el admin Panel
+			AdminGUI admin = new AdminGUI();
+			frmLibraryManagementSystem.remove(panel11);
+			frmLibraryManagementSystem.getContentPane().add(admin);
+			frmLibraryManagementSystem.revalidate();
+			frmLibraryManagementSystem.repaint();
+
+		}
+
+		else if (m.isMemberExists(email, password)) {
+			if (m.isPasswordCorrect(email, password)) {
+				// switch to the Book Frame
+				// TODO code to switch to the BooksGUI Panel
+
+			} else {
+				lblLabel_Invalid.setVisible(true);
+				panel.revalidate();
+				panel.repaint();
+			}
+
+		} else {
+			// if it's not a member then add the member to the database (adding
+			// takes place in member class)
+			// TODO code to switch to the BooksGUI Panel
+
+		}
+
 	}
 }
