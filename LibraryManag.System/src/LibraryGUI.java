@@ -43,7 +43,9 @@ public class LibraryGUI {
 			public void run() {
 				try {
 					// LibraryGUI window = new LibraryGUI();
+				
 					window.frmLibraryManagementSystem.setVisible(true);
+					window.frmLibraryManagementSystem.setLocationRelativeTo(null);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
