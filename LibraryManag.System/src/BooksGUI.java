@@ -115,6 +115,9 @@ public class BooksGUI extends JPanel {
 			public void stateChanged(ChangeEvent e) {
 				if (tabbedPane.getSelectedIndex() == 0)
 					btnReturnBook.setEnabled(false);
+				if (tabbedPane.getSelectedIndex() == 1)
+					btnBorrowBook.setEnabled(false);
+				
 			}
 		});
 

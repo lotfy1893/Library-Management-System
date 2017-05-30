@@ -3,13 +3,17 @@ import java.awt.BorderLayout;
 import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JTextField;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.JLabel;
 import java.awt.Font;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import javax.swing.JCheckBox;
 
 /**
  * 
@@ -25,10 +29,8 @@ public class AddBookGUI extends JFrame {
 	private JTextField textField_BookName;
 	private JTextField textField_AuthorName;
 	private JTextField textField_Category;
-	private JTextField textField_Availability;
 	private JTextField textField_EntryDate;
 	private JTextField textField_IssueDate;
-	private JTextField textField_noOfCopies;
 
 	/**
 	 * Launch the application.
@@ -91,16 +93,6 @@ public class AddBookGUI extends JFrame {
 		textField_Category.setBounds(10, 144, 222, 20);
 		contentPane.add(textField_Category);
 
-		JLabel lblAvailability = new JLabel("Availability");
-		lblAvailability.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblAvailability.setBounds(10, 186, 87, 14);
-		contentPane.add(lblAvailability);
-
-		textField_Availability = new JTextField();
-		textField_Availability.setColumns(10);
-		textField_Availability.setBounds(10, 208, 222, 20);
-		contentPane.add(textField_Availability);
-
 		JLabel lblEntryDate = new JLabel("Entry Date");
 		lblEntryDate.setFont(new Font("Tahoma", Font.BOLD, 12));
 		lblEntryDate.setBounds(316, 123, 87, 14);
@@ -126,10 +118,16 @@ public class AddBookGUI extends JFrame {
 		lblNumberOfCopies.setBounds(316, 64, 115, 14);
 		contentPane.add(lblNumberOfCopies);
 
-		textField_noOfCopies = new JTextField();
-		textField_noOfCopies.setColumns(10);
-		textField_noOfCopies.setBounds(316, 85, 205, 20);
-		contentPane.add(textField_noOfCopies);
+		SpinnerNumberModel model_noOfCopies = new SpinnerNumberModel(0, 0, 50, 1);
+		JSpinner spinner_noOfCopies = new JSpinner(model_noOfCopies);
+		spinner_noOfCopies.setBounds(316, 85, 60, 20);
+		contentPane.add(spinner_noOfCopies);
+
+
+		JCheckBox availabilityCheckBox = new JCheckBox("Available");
+		availabilityCheckBox.setFont(new Font("Tahoma", Font.BOLD, 12));
+		availabilityCheckBox.setBounds(10, 194, 97, 23);
+		contentPane.add(availabilityCheckBox);
 
 		JButton Button_EnterData = new JButton("Enter Data");
 		Button_EnterData.setFont(new Font("Tahoma", Font.PLAIN, 12));
@@ -139,11 +137,12 @@ public class AddBookGUI extends JFrame {
 				String bookName = textField_BookName.getText();
 				String authorName = textField_AuthorName.getText();
 				String category = textField_Category.getText();
-				String availability = textField_Availability.getText();
+				Boolean isAvailable = availabilityCheckBox.isSelected();
 				String entryDate = textField_EntryDate.getText();
 				String issueDate = textField_IssueDate.getText();
-				String noOfCopies = textField_noOfCopies.getText();
+				int noOfCopies = model_noOfCopies.getNumber().intValue();
 
+				System.out.println(noOfCopies + "");
 				// TODO fill the Database with the book information given
 				// Add book entery fel Admin GUI as well
 
@@ -151,5 +150,6 @@ public class AddBookGUI extends JFrame {
 		});
 		Button_EnterData.setBounds(49, 263, 429, 31);
 		contentPane.add(Button_EnterData);
+
 	}
 }
