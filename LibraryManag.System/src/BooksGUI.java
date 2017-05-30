@@ -16,6 +16,8 @@ import java.awt.BorderLayout;
 import javax.swing.ListSelectionModel;
 import java.awt.ScrollPane;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.JTabbedPane;
 import java.awt.Font;
@@ -40,7 +42,6 @@ public class BooksGUI extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	// private JList<String> countryList = new JList();
 
 	public BooksGUI() {
 
@@ -48,19 +49,74 @@ public class BooksGUI extends JPanel {
 		setBounds(0, 0, 950, 575);
 		setLayout(null);
 
+		// ---------- related to the book view page
+		String[][] mybooks = { { "Math_book", "peter" }, { "Science_book", "lotfy" }, { "statistics_book", "bassem" } };
+		DefaultTableModel userTableModel_Mybooks = new DefaultTableModel(mybooks,
+				new String[] { "Book Name", "Author Name", "Category", "Borrow Date", "Return Date" }) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+		// ------------------------------------
+
+		// Borrow Button
 		JButton btnBorrowBook = new JButton("Borrow Book");
+		btnBorrowBook.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				// TODO when the user press the Borrow Button
+				// make the unavailable in library book table in case no other
+				// copies in the Library
+				// as well as to the GUI
+				// add the book to the user's book list or table
+				// as well as to the GUI
+
+			}
+		});
 		btnBorrowBook.setBounds(812, 242, 117, 35);
 		btnBorrowBook.setEnabled(false);
 		add(btnBorrowBook);
 
+		// Return Button
 		JButton btnReturnBook = new JButton("Return Book");
+		btnReturnBook.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				// TODO when the user press the Return Button
+				// Remove the book from the User database table
+				// Remove it from the GUI also
+				// make it available in the Library books list if not
+				// make the book available in the GUI also if applicable
+
+				System.out.println(table_MyBooks.getSelectedRow());
+				// Return the no. of selected row
+
+				if (table_MyBooks.getSelectedRow() != -1) {
+					// remove selected row from the model
+					userTableModel_Mybooks.removeRow(table_MyBooks.getSelectedRow());
+				}
+
+				// System.out.println(userTableModel_Mybooks.getDataVector().elementAt(table_MyBooks.getSelectedRow()));
+				// Return the data, in case we need it
+			}
+		});
 		btnReturnBook.setBounds(812, 184, 117, 35);
 		btnReturnBook.setEnabled(false);
 		add(btnReturnBook);
 
+		// Tabbed pane to switch between the library books view and my books
+		// view
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBounds(64, 163, 738, 380);
 		add(tabbedPane);
+
+		tabbedPane.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				if (tabbedPane.getSelectedIndex() == 0)
+					btnReturnBook.setEnabled(false);
+			}
+		});
 
 		// -------------------------------------------- Library books Page
 		scrollPane_LibraryBooks = new JScrollPane();
@@ -73,15 +129,16 @@ public class BooksGUI extends JPanel {
 
 		String[][] books = { { "Math_book", "peter", "A" }, { "Science_book", "lotfy", "N" },
 				{ "statistics_book", "bassem", "A" } };
-		
-		DefaultTableModel userTableModel = new DefaultTableModel(books,
-				new String[] { "Book name", "Author name", "Availability", "Category", "Issue Date", "No. of Copies" }) {
+
+		DefaultTableModel userTableModel = new DefaultTableModel(books, new String[] { "Book name", "Author name",
+				"Availability", "Category", "Issue Date", "No. of Copies" }) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
 			}
 		};
 
+		// Listener to select between books
 		table_LibraryBooks.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
 
@@ -107,7 +164,8 @@ public class BooksGUI extends JPanel {
 		table_LibraryBooks.getColumnModel().getColumn(2).setPreferredWidth(65);
 		scrollPane_LibraryBooks.setViewportView(table_LibraryBooks);
 
-		// ---------------------------------------------------------------- My Books Page
+		// ---------------------------------------------------------------- My
+		// Books Page
 
 		scrollPane_MyBooks = new JScrollPane();
 		tabbedPane.addTab("My books", null, scrollPane_MyBooks, null);
@@ -118,28 +176,18 @@ public class BooksGUI extends JPanel {
 		table_MyBooks.setFocusable(false);
 		table_MyBooks.setRowSelectionAllowed(true);
 
-		String[][] mybooks = { { "Math_book", "peter" }, { "Science_book", "lotfy" }, { "statistics_book", "bassem" } };
-		
-		DefaultTableModel userTableModel_Mybooks = new DefaultTableModel(mybooks,
-				new String[] { "Book Name", "Author Name" , "Category", "Borrow Date", "Return Date" }) {
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				return false;
-			}
-		};
-
+		// listener to select between my books
 		table_MyBooks.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
 
 				// set return book true
 				btnReturnBook.setEnabled(true);
 
+				// System.out.println(table_MyBooks.getSelectedRow());
 			}
 		});
 		scrollPane_MyBooks.setRowHeaderView(table_MyBooks);
 
-		
-		
 		table_MyBooks.setModel(userTableModel_Mybooks);
 		table_MyBooks.getColumnModel().getColumn(0).setPreferredWidth(236);
 		table_MyBooks.getColumnModel().getColumn(3).setPreferredWidth(83);
@@ -154,6 +202,18 @@ public class BooksGUI extends JPanel {
 		textField_Search.setColumns(10);
 
 		JButton btn_Search = new JButton("Search");
+		btn_Search.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				String searchInput = textField_Search.getText();
+				textField_Search.setText("");
+
+				// TODO when the user press the search Button
+				// Return all the Library books here
+				// view the data in the Library Books view
+
+			}
+		});
 		btn_Search.setBounds(614, 119, 89, 23);
 		add(btn_Search);
 

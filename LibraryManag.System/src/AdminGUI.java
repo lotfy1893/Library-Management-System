@@ -16,6 +16,8 @@ import java.awt.BorderLayout;
 import javax.swing.ListSelectionModel;
 import java.awt.ScrollPane;
 import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.JTabbedPane;
 import java.awt.Font;
@@ -42,7 +44,6 @@ public class AdminGUI extends JPanel {
 	/**
 	 * Create the panel.
 	 */
-	// private JList<String> countryList = new JList();
 
 	public AdminGUI() {
 
@@ -50,48 +51,7 @@ public class AdminGUI extends JPanel {
 		setBounds(0, 0, 950, 575);
 		setLayout(null);
 
-		JButton btnRemoveBook = new JButton("Remove Book");
-		btnRemoveBook.setBounds(812, 242, 117, 35);
-		btnRemoveBook.setEnabled(false);
-		add(btnRemoveBook);
-
-		JButton btnAddBook = new JButton("Add Book");
-		btnAddBook.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				AddBookGUI newBook = new AddBookGUI(); ////////////////////
-				newBook.setVisible(true);
-			}
-		});
-		btnAddBook.setBounds(812, 184, 117, 35);
-		// btnAddBook.setEnabled(false);
-		add(btnAddBook);
-
-		JButton btnAddUser = new JButton("Add User");
-		btnAddUser.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		btnAddUser.setBounds(812, 296, 117, 35);
-		add(btnAddUser);
-
-		JButton btnRemoveUser = new JButton("Remove User");
-		btnRemoveUser.setBounds(812, 350, 117, 35);
-		btnRemoveUser.setEnabled(false);
-		add(btnRemoveUser);
-
-		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
-		tabbedPane.setBounds(64, 163, 738, 279);
-		add(tabbedPane);
-
-		// -------------------------------------------------------------------------
-		// Library books Page
-		scrollPane_LibraryBooks = new JScrollPane();
-		tabbedPane.addTab("Library Books", null, scrollPane_LibraryBooks, null);
-
-		table_LibraryBooks = new JTable();
-		table_LibraryBooks.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		table_LibraryBooks.setFocusable(false);
-		table_LibraryBooks.setRowSelectionAllowed(true);
+		// ----------------------- related to the LibraryBook tab
 
 		String[][] books = { { "Math_book", "peter", "A" }, { "Science_book", "lotfy", "N" },
 				{ "statistics_book", "bassem", "A" } };
@@ -104,10 +64,111 @@ public class AdminGUI extends JPanel {
 			}
 		};
 
+		// -----------------------
+
+		// ----------------------- related to the viewUser tab
+
+		String[][] myUsers = { { "peter", "peter@jku.com" }, { "Lotfy", "Lotfy@jku.com" },
+				{ "Bassem", "Bassem@jku.com" } };
+		DefaultTableModel userTableModel_MyUsers = new DefaultTableModel(myUsers,
+				new String[] { "User Full Name", "email Address" }) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+
+		// -----------------------
+
+		// Remove Book Button
+		JButton btnRemoveBook = new JButton("Remove Book");
+
+		// Remove Book Listener
+		btnRemoveBook.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				// TODO when the user press the Remove Book Button
+				// Remove the book from the Book database table
+
+				System.out.println(table_LibraryBooks.getSelectedRow());
+				// Return the no. of selected row
+
+				if (table_LibraryBooks.getSelectedRow() != -1) {
+					// remove selected row from the model
+					userTableModel.removeRow(table_LibraryBooks.getSelectedRow());
+				}
+
+			}
+		});
+		btnRemoveBook.setBounds(812, 242, 117, 35);
+		btnRemoveBook.setEnabled(false);
+		add(btnRemoveBook);
+
+		// Add Book Button
+		JButton btnAddBook = new JButton("Add Book");
+
+		// Add Book Listener
+		btnAddBook.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				AddBookGUI newBook = new AddBookGUI();
+				newBook.setVisible(true);
+			}
+		});
+		btnAddBook.setBounds(812, 184, 117, 35);
+		add(btnAddBook);
+
+		// Remove User Button
+		JButton btnRemoveUser = new JButton("Remove User");
+
+		// Remove User Listener
+		btnRemoveUser.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				// TODO when the user press the Remove User Button
+				// Remove the user from the User database table
+
+				System.out.println(table_ViewUser.getSelectedRow());
+				// Return the no. of selected row
+
+				if (table_ViewUser.getSelectedRow() != -1) {
+					// remove selected row from the model
+					userTableModel_MyUsers.removeRow(table_ViewUser.getSelectedRow());
+				}
+
+			}
+		});
+		btnRemoveUser.setBounds(812, 299, 117, 35);
+		btnRemoveUser.setEnabled(false);
+		add(btnRemoveUser);
+
+		// Tab to switch between Library books view and Users View
+		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		tabbedPane.setBounds(64, 163, 738, 279);
+		add(tabbedPane);
+
+		// tab Listener
+		tabbedPane.addChangeListener(new ChangeListener() {
+			public void stateChanged(ChangeEvent e) {
+				if (tabbedPane.getSelectedIndex() == 0)
+					btnRemoveUser.setEnabled(false);
+
+				if (tabbedPane.getSelectedIndex() == 1)
+					btnRemoveBook.setEnabled(false);
+			}
+		});
+
+		// ---------------------------------------------- Library books Page
+		scrollPane_LibraryBooks = new JScrollPane();
+		tabbedPane.addTab("Library Books", null, scrollPane_LibraryBooks, null);
+
+		table_LibraryBooks = new JTable();
+		table_LibraryBooks.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table_LibraryBooks.setFocusable(false);
+		table_LibraryBooks.setRowSelectionAllowed(true);
+
+		// row selection Listener
 		table_LibraryBooks.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
-
-				// checks if the books is available or not
 
 				if (true) {
 					btnRemoveBook.setEnabled(true);
@@ -136,27 +197,20 @@ public class AdminGUI extends JPanel {
 		table_ViewUser.setFocusable(false);
 		table_ViewUser.setRowSelectionAllowed(true);
 
-		String[][] mybooks = { { "peter", "peter@jku.com" }, { "Lotfy", "Lotfy@jku.com" },
-				{ "Bassem", "Bassem@jku.com" } };
-		DefaultTableModel userTableModel_Mybooks = new DefaultTableModel(mybooks,
-				new String[] { "User Full Name", "email Address" }) {
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				return false;
-			}
-		};
-
+		// row selection Listener
 		table_ViewUser.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
 
-				// remove user is Enabled
+				// remove user button is Enabled
 				btnRemoveUser.setEnabled(true);
+				
+				// refresh el user book list view 
 
 			}
 		});
 		scrollPane_ViewUser.setRowHeaderView(table_ViewUser);
 
-		table_ViewUser.setModel(userTableModel_Mybooks);
+		table_ViewUser.setModel(userTableModel_MyUsers);
 
 		table_ViewUser.getColumnModel().getColumn(0).setPreferredWidth(100);
 		scrollPane_ViewUser.setViewportView(table_ViewUser);
@@ -166,7 +220,7 @@ public class AdminGUI extends JPanel {
 		table_UserBooks = new JTable();
 
 		JScrollPane scrollPane_UserBooks = new JScrollPane();
-		scrollPane_UserBooks.setBounds(64, 458, 738, 79);
+		scrollPane_UserBooks.setBounds(64, 478, 738, 75);
 		add(scrollPane_UserBooks);
 		scrollPane_UserBooks.setViewportView(table_UserBooks);
 
@@ -199,6 +253,18 @@ public class AdminGUI extends JPanel {
 		textField_Search.setColumns(10);
 
 		JButton btn_Search = new JButton("Search");
+		btn_Search.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+
+				String searchInput = textField_Search.getText();
+				textField_Search.setText("");
+
+				// TODO when the user press the search Button
+				// Return all the Library books here
+				// view the data in the Library Books view
+
+			}
+		});
 		btn_Search.setBounds(614, 119, 89, 23);
 		add(btn_Search);
 
@@ -208,6 +274,12 @@ public class AdminGUI extends JPanel {
 		lblNewLabel_UserName.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 25));
 		lblNewLabel_UserName.setBounds(64, 54, 356, 44);
 		add(lblNewLabel_UserName);
+
+		JLabel lblUsersBookList = new JLabel("User's Book List");
+		lblUsersBookList.setForeground(Color.GREEN);
+		lblUsersBookList.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblUsersBookList.setBounds(64, 463, 168, 14);
+		add(lblUsersBookList);
 
 	}
 }

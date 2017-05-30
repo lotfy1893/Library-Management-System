@@ -135,6 +135,7 @@ public class AddBookGUI extends JFrame {
 		Button_EnterData.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		Button_EnterData.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+
 				String bookName = textField_BookName.getText();
 				String authorName = textField_AuthorName.getText();
 				String category = textField_Category.getText();
@@ -143,8 +144,8 @@ public class AddBookGUI extends JFrame {
 				String issueDate = textField_IssueDate.getText();
 				String noOfCopies = textField_noOfCopies.getText();
 
-				// TODO fill the Database/BookTable with the book given
-				// information
+				// TODO fill the Database with the book information given
+				// Add book entery fel Admin GUI as well
 
 			}
 		});
