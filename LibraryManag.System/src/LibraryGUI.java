@@ -34,6 +34,8 @@ public class LibraryGUI {
 	private JLabel lblLabel_Invalid = new JLabel("Invalid Email or Password, Please try again.");
 	static LibraryGUI window = new LibraryGUI();
 	private JTextField textField_FullName;
+	
+	private MemberRepository memberRepository;
 
 	/**
 	 * Launch the application.
@@ -191,7 +193,7 @@ public class LibraryGUI {
 			panel.repaint();
 		}
 
-		else if (m.isAdmin(email, password)) {
+		else if (m.isAdmin()) {
 			// view el admin Panel
 			AdminGUI admin = new AdminGUI();
 			frmLibraryManagementSystem.remove(panel11);
@@ -201,8 +203,8 @@ public class LibraryGUI {
 
 		}
 
-		else if (m.isMemberExists(email, password)) {
-			if (m.isPasswordCorrect(email, password)) {
+		else if (memberRepository.isMemberExists(email)) {
+			if (memberRepository.passwordMatchesForLogin(email, password)) {
 				// switch to the Book Frame
 				// TODO code to switch to the BooksGUI Panel
 
