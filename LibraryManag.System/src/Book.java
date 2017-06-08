@@ -5,29 +5,48 @@ import java.sql.*;
  */
 
 /**
- * @author 
+ * @author Praktikant05
  *
  */
 public class Book {
-	
+
 	private String name;
 	private int id;
 	private String description;
-	private Category category;
+	private String category;
 	private String author;
 	private Date bookIssueDate;
-	private Timestamp bookEntryDate; // in db should be borrowDatetime and Return Date only type
-	private Timestamp bookBorrowDate;
-	private Date bookReturnDate;
-
+	private Timestamp bookEntryDate; // in db should be borrowDatetime and
+										// Return Date only type
 	
-	public static enum Category{//all possible categories to be entered
-		ROMANCE,
-		THRILLER,
-		HORROR,
-		POLICE,
-		MYSTERY
-	};
+	private int numberOfCopies;
+	
+	private int version;
+	private int borrowPeriod; //in days
+
+	public Book(String name, String description, String category, String author, Date issue, Timestamp entry,
+			int version, int borrowPeriod, int no) {
+
+		this.name = name;
+		this.description = description;
+		this.setCategory(category);
+		this.author = author;
+		this.bookIssueDate = issue;
+		this.bookEntryDate = entry;
+		this.version = version;
+		this.borrowPeriod = borrowPeriod;
+		this.setNumberOfCopies(no);
+	}
+
+
+	public int getVersion() {
+		return version;
+	}
+
+	public void setVersion(int version) {
+		this.version = version;
+	}
+
 	public String getDescription() {
 		return description;
 	}
@@ -60,28 +79,12 @@ public class Book {
 		this.bookEntryDate = bookEntryDate;
 	}
 
-	public Timestamp getBookBorrowDate() {
-		return bookBorrowDate;
-	}
-
-	public void setBookBorrowDate(Timestamp bookBorrowDate) {
-		this.bookBorrowDate = bookBorrowDate;
-	}
-
-	public Date getBookReturnDate() {
-		return bookReturnDate;
-	}
-
-	public void setBookReturnDate(Date bookReturnDate) {
-		this.bookReturnDate = bookReturnDate;
-	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
 
 	public String getName() {
-		return name;   // to print the books' names for each member
+		return name; // to print the books' names for each member
 	}
 
 	public int getId() {
@@ -92,13 +95,32 @@ public class Book {
 		this.id = id;
 	}
 
-	public Category getCategory() {
+	public int getBorrowPeriod() {
+		return borrowPeriod;
+	}
+
+	public void setBorrowPeriod(int borrowPeriod) {
+		this.borrowPeriod = borrowPeriod;
+	}
+
+
+	public String getCategory() {
 		return category;
 	}
 
-	public void setCategory(Category category) {
+
+	public void setCategory(String category) {
 		this.category = category;
 	}
-	
+
+
+	public int getNumberOfCopies() {
+		return numberOfCopies;
+	}
+
+
+	public void setNumberOfCopies(int numberOfCopies) {
+		this.numberOfCopies = numberOfCopies;
+	}
 
 }

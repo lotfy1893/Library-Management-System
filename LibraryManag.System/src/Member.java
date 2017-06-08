@@ -10,17 +10,16 @@ public class Member {
 	private int id;
 	private String email; // unique for each user
 	private String password; // used to validate the user
-	private int No_of_booksBorrowed; // maximum of 3 books
 	private boolean isAdmin;
 	private String fullName;
 	private ArrayList<Book> books;
 
-	public Member(String email, String password) {
+	public Member(String email, String password,String fullName) {
 
 		this.email = email;
 		this.password = password;
-		No_of_booksBorrowed = 0;
 	}
+	
 
 	public String getEmail() {
 		return email;
@@ -28,10 +27,6 @@ public class Member {
 
 	public String getPassword() {
 		return password;
-	}
-
-	public int getNo_of_booksBorrowed() {
-		return No_of_booksBorrowed;
 	}
 
 	public boolean isAdmin() {
@@ -44,10 +39,6 @@ public class Member {
 
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public void setNo_of_booksBorrowed(int no_of_booksBorrowed) {
-		No_of_booksBorrowed = no_of_booksBorrowed;
 	}
 
 	public boolean isEmailFormatCorrect(String email) {
@@ -82,7 +73,7 @@ public class Member {
 		}
 		books.add(book);
 	}
-	public void removeBook(int id){
+	public void returnBook(int id){
 		for(Book book: books){
 			if(book.getId() == id)
 				books.remove(book);

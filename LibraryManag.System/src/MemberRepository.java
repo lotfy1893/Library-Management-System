@@ -1,8 +1,15 @@
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+
+
 
 public class MemberRepository {
 
@@ -18,39 +25,96 @@ public class MemberRepository {
 
 	}
 
-	public Member getMemberById(int id) throws SQLException {
+	public Member getMemberByEmail(String email) throws SQLException {
 		Statement myStmt = myConn.createStatement();
-		// ResultSet myRs = myStmt.executeQuery("");
+		ResultSet stringQuery = myStmt.executeQuery("");
 		// TODO query to retrieve member all info by id
-
-		return null;
+		
+		Member loggedInMember = null;
+		
+		if(stringQuery != null){
+		String queryResultID = stringQuery.getString("member_id");
+		String queryResultFullName = stringQuery.getString("full_name");
+		String queryResultEmail = stringQuery.getString("email");
+		String queryResultType = stringQuery.getString("type");
+		String queryResultPassword = stringQuery.getString("password");
+		
+		loggedInMember = new Member(queryResultEmail,queryResultPassword,queryResultFullName);
+		loggedInMember.setId(Integer.parseInt(queryResultID));
+		loggedInMember.setAdmin(queryResultType.equalsIgnoreCase("member")? false : true);
+		}
+		
+		return loggedInMember;
 	}
 	
-	public Member registerNewMember() throws SQLException{
+	public boolean registerNewMember(Member member) throws SQLException{
+		
+		if (isMemberExists(member.getEmail()))
+			return false;
+		
 		Statement myStmt = myConn.createStatement();
+		myStmt.executeQuery("");
+		return true;
 		//TODO query to insert the new member in the db
 		
-		return null;
 	}
 
-	public ArrayList<Book> getBorrowedBooks(int id) {
+	public ArrayList<Book> getBorrowedBooks(int id) throws SQLException, ParseException {
 		// TODO query to retrive all the member books
-		// ResultSet myRs = myStmt.executeQuery("");
-		return null;
+		Statement myStmt = myConn.createStatement();
+		ResultSet stringQuery = myStmt.executeQuery("");
+		ArrayList<Book> result = new ArrayList<>();
+		
+		while(stringQuery.next()){
+			String name = stringQuery.getString("book_name");
+			String desc = stringQuery.getString("description");
+			String category = stringQuery.getString("category");
+			String author = stringQuery.getString("author");
+			String bookIssue = stringQuery.getString("book_issue_date");
+			String entryDate = stringQuery.getString("entry_date");
+			String version = stringQuery.getString("version");
+			String borrowPeriod = stringQuery.getString("borrow_period");
+			String copies = stringQuery.getString("copies");
+			
+			Date issue = (Date) new SimpleDateFormat("yyyy/dd/MM").parse(bookIssue);
+			Timestamp tsEntry = Timestamp.valueOf(entryDate);
+			int vers = Integer.parseInt(version);
+			int borrow = Integer.parseInt(borrowPeriod);
+			
+			Book book = new Book(name,desc,category,author,issue,tsEntry,vers,borrow,Integer.parseInt(copies));
+			book.setId(Integer.parseInt(stringQuery.getString("book_name")));
+			result.add(book);
+		}
+		
+		return result;
 	}
 
-	public boolean isMemberExists(String email) {
+	public boolean isMemberExists(String email) throws SQLException {
 		// TODO query to see whether the member is in our db or not
-		// ResultSet myRs = myStmt.executeQuery("");
+		Statement myStmt = myConn.createStatement();
+		ResultSet stringQuery = myStmt.executeQuery("");
+		
+		if(stringQuery == null || stringQuery.equals("")){
+			return false;
+		}
 		return true;
 	}
 
-	public boolean passwordMatchesForLogin(String email, String password) {
+	public Member passwordMatchesForLogin(String email, String password) throws SQLException {
 		// TODO query to check matching email and password invoked with login
-		// ResultSet myRs = myStmt.executeQuery("");
-		return true;
+		if(!isMemberExists(email))
+			return null;
+		Statement myStmt = myConn.createStatement();
+		ResultSet stringQueryPassword = myStmt.executeQuery("");
+		
+		if(password.equals(stringQueryPassword)){
+			return getMemberByEmail(email);
+		}else{
+			return null;
+		}
 	}
 
+	
 	public boolean exceededReturnDue(int id) {
 		// TODO query to check that the user doesn't have a book that excedds
 		// due

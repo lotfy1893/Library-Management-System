@@ -13,6 +13,7 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 import javax.swing.JFormattedTextField;
@@ -138,7 +139,12 @@ public class LibraryGUI {
 		btn_Login.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		btn_Login.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				inputListenerForLoginButton();// call
+				try {
+					inputListenerForLoginButton();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}// call
 												// inputListenerForLoginButton
 												// method when "Login" button is
 												// pressed
@@ -170,7 +176,7 @@ public class LibraryGUI {
 
 	}
 
-	public void inputListenerForLoginButton() { // do what inside inputListener
+	public void inputListenerForLoginButton() throws SQLException { // do what inside inputListener
 												// when Login is pressed
 
 		String email = textField_Email.getText().toLowerCase(); // put the input
@@ -185,7 +191,7 @@ public class LibraryGUI {
 		String password = passwordField.getText();
 		passwordField.setText("");
 
-		Member m = new Member(email, password);
+		Member m = new Member(email, password, fullName);
 
 		if (!m.isEmailFormatCorrect(email) || password.equals("")) {
 			lblLabel_Invalid.setVisible(true);
@@ -204,7 +210,7 @@ public class LibraryGUI {
 		}
 
 		else if (memberRepository.isMemberExists(email)) {
-			if (memberRepository.passwordMatchesForLogin(email, password)) {
+			if (memberRepository.passwordMatchesForLogin(email, password)!= null) {
 				// switch to the Book Frame
 				// TODO code to switch to the BooksGUI Panel
 
