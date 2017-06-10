@@ -1,6 +1,9 @@
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import javax.swing.SwingUtilities;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -38,6 +41,7 @@ public class BooksGUI extends JPanel {
 	private JTable table_MyBooks;
 	private JScrollPane scrollPane_LibraryBooks;
 	private JScrollPane scrollPane_MyBooks;
+	private JLabel label_LogOut;
 
 	/**
 	 * Create the panel.
@@ -117,7 +121,7 @@ public class BooksGUI extends JPanel {
 					btnReturnBook.setEnabled(false);
 				if (tabbedPane.getSelectedIndex() == 1)
 					btnBorrowBook.setEnabled(false);
-				
+
 			}
 		});
 
@@ -226,6 +230,26 @@ public class BooksGUI extends JPanel {
 		lblNewLabel_UserName.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 25));
 		lblNewLabel_UserName.setBounds(64, 54, 356, 44);
 		add(lblNewLabel_UserName);
+
+		label_LogOut = new JLabel("Log Out");
+		label_LogOut.setForeground(new Color(0, 255, 0));
+		label_LogOut.setFont(new Font("Tahoma", Font.BOLD, 15));
+		label_LogOut.setBounds(853, 68, 63, 24);
+		add(label_LogOut);
+
+		label_LogOut.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				// return to the Login Page
+				System.gc();
+				java.awt.Window win[] = java.awt.Window.getWindows();
+				for (int i = 0; i < win.length; i++) {
+					win[i].dispose();
+					win[i] = null;
+				}
+				LibraryGUI.main(null);
+
+			}
+		});
 
 	}
 }

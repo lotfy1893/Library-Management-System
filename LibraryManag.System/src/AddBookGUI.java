@@ -123,7 +123,6 @@ public class AddBookGUI extends JFrame {
 		spinner_noOfCopies.setBounds(316, 85, 60, 20);
 		contentPane.add(spinner_noOfCopies);
 
-
 		JCheckBox availabilityCheckBox = new JCheckBox("Available");
 		availabilityCheckBox.setFont(new Font("Tahoma", Font.BOLD, 12));
 		availabilityCheckBox.setBounds(10, 194, 97, 23);

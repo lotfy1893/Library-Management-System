@@ -1,6 +1,9 @@
 import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 import javax.swing.SwingUtilities;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -15,6 +18,8 @@ import javax.swing.AbstractListModel;
 import java.awt.BorderLayout;
 import javax.swing.ListSelectionModel;
 import java.awt.ScrollPane;
+import java.awt.Window;
+
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -34,7 +39,7 @@ import javax.swing.UIManager;
  *
  */
 public class AdminGUI extends JPanel {
-	private JTextField textField_Search;
+	private JTextField txtFindABook;
 	private JTable table_LibraryBooks;
 	private JTable table_ViewUser;
 	private JScrollPane scrollPane_LibraryBooks;
@@ -141,6 +146,45 @@ public class AdminGUI extends JPanel {
 		btnRemoveUser.setEnabled(false);
 		add(btnRemoveUser);
 
+		// User's Book's Label
+		JLabel lblUsersBookList = new JLabel("User's Book List");
+		lblUsersBookList.setForeground(Color.GREEN);
+		lblUsersBookList.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblUsersBookList.setBounds(64, 463, 168, 14);
+		add(lblUsersBookList);
+
+		// ---------------------------------View user books list
+
+		table_UserBooks = new JTable();
+
+		JScrollPane scrollPane_UserBooks = new JScrollPane();
+		scrollPane_UserBooks.setBounds(64, 478, 738, 75);
+		add(scrollPane_UserBooks);
+		scrollPane_UserBooks.setViewportView(table_UserBooks);
+
+		table_UserBooks.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		table_UserBooks.setFocusable(false);
+		table_UserBooks.setRowSelectionAllowed(true);
+
+		String[][] userBooks = { { "Math_book", "peter", "A" }, { "Science_book", "lotfy", "N" },
+				{ "statistics_book", "bassem", "A" } };
+
+		DefaultTableModel userTableModel_UserBooks = new DefaultTableModel(userBooks,
+				new String[] { "Book Name", "Author Name", "Category", "Borrow Date", "Return Date" }) {
+			@Override
+			public boolean isCellEditable(int row, int column) {
+				return false;
+			}
+		};
+
+		table_UserBooks.setModel(userTableModel_UserBooks);
+		table_UserBooks.getColumnModel().getColumn(0).setPreferredWidth(236);
+		table_UserBooks.getColumnModel().getColumn(3).setPreferredWidth(83);
+		table_UserBooks.getColumnModel().getColumn(4).setPreferredWidth(83);
+		table_UserBooks.setBackground(UIManager.getColor("Button.background"));
+
+		// --------------------------------------------------------------
+
 		// Tab to switch between Library books view and Users View
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBounds(64, 163, 738, 279);
@@ -149,11 +193,17 @@ public class AdminGUI extends JPanel {
 		// tab Listener
 		tabbedPane.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
-				if (tabbedPane.getSelectedIndex() == 0)
+				if (tabbedPane.getSelectedIndex() == 0) {
 					btnRemoveUser.setEnabled(false);
+					lblUsersBookList.setVisible(false);
+					scrollPane_UserBooks.setVisible(false);
 
-				if (tabbedPane.getSelectedIndex() == 1)
+				}
+				if (tabbedPane.getSelectedIndex() == 1) {
 					btnRemoveBook.setEnabled(false);
+					lblUsersBookList.setVisible(true);
+					scrollPane_UserBooks.setVisible(true);
+				}
 			}
 		});
 
@@ -203,8 +253,8 @@ public class AdminGUI extends JPanel {
 
 				// remove user button is Enabled
 				btnRemoveUser.setEnabled(true);
-				
-				// refresh el user book list view 
+
+				// refresh el user book list view
 
 			}
 		});
@@ -215,49 +265,19 @@ public class AdminGUI extends JPanel {
 		table_ViewUser.getColumnModel().getColumn(0).setPreferredWidth(100);
 		scrollPane_ViewUser.setViewportView(table_ViewUser);
 
-		// ---------------------------------View user books list
-
-		table_UserBooks = new JTable();
-
-		JScrollPane scrollPane_UserBooks = new JScrollPane();
-		scrollPane_UserBooks.setBounds(64, 478, 738, 75);
-		add(scrollPane_UserBooks);
-		scrollPane_UserBooks.setViewportView(table_UserBooks);
-
-		table_UserBooks.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		table_UserBooks.setFocusable(false);
-		table_UserBooks.setRowSelectionAllowed(true);
-
-		String[][] userBooks = { { "Math_book", "peter", "A" }, { "Science_book", "lotfy", "N" },
-				{ "statistics_book", "bassem", "A" } };
-
-		DefaultTableModel userTableModel_UserBooks = new DefaultTableModel(userBooks,
-				new String[] { "Book Name", "Author Name", "Category", "Borrow Date", "Return Date" }) {
-			@Override
-			public boolean isCellEditable(int row, int column) {
-				return false;
-			}
-		};
-
-		table_UserBooks.setModel(userTableModel_UserBooks);
-		table_UserBooks.getColumnModel().getColumn(0).setPreferredWidth(236);
-		table_UserBooks.getColumnModel().getColumn(3).setPreferredWidth(83);
-		table_UserBooks.getColumnModel().getColumn(4).setPreferredWidth(83);
-		table_UserBooks.setBackground(UIManager.getColor("Button.background"));
-
-		// --------------------------------------------------------------
-
-		textField_Search = new JTextField();
-		textField_Search.setBounds(64, 120, 513, 20);
-		add(textField_Search);
-		textField_Search.setColumns(10);
+		txtFindABook = new JTextField();
+		txtFindABook.setText("Find a book...");
+		txtFindABook.setToolTipText("");
+		txtFindABook.setBounds(64, 120, 513, 20);
+		add(txtFindABook);
+		txtFindABook.setColumns(10);
 
 		JButton btn_Search = new JButton("Search");
 		btn_Search.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				String searchInput = textField_Search.getText();
-				textField_Search.setText("");
+				String searchInput = txtFindABook.getText();
+				txtFindABook.setText("");
 
 				// TODO when the user press the search Button
 				// Return all the Library books here
@@ -275,11 +295,26 @@ public class AdminGUI extends JPanel {
 		lblNewLabel_UserName.setBounds(64, 54, 356, 44);
 		add(lblNewLabel_UserName);
 
-		JLabel lblUsersBookList = new JLabel("User's Book List");
-		lblUsersBookList.setForeground(Color.GREEN);
-		lblUsersBookList.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblUsersBookList.setBounds(64, 463, 168, 14);
-		add(lblUsersBookList);
+		JLabel lblLogOut = new JLabel("Log Out");
+		lblLogOut.setForeground(new Color(0, 255, 51));
+		lblLogOut.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblLogOut.setBounds(853, 74, 63, 24);
+		add(lblLogOut);
+
+		lblLogOut.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				// return to the Login Page
+
+				System.gc();
+				java.awt.Window win[] = java.awt.Window.getWindows();
+				for (int i = 0; i < win.length; i++) {
+					win[i].dispose();
+					win[i] = null;
+				}
+				LibraryGUI.main(null);
+
+			}
+		});
 
 	}
 }

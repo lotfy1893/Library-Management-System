@@ -13,7 +13,6 @@ import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.SQLException;
 import java.awt.event.ActionEvent;
 import java.awt.Font;
 import javax.swing.JFormattedTextField;
@@ -25,7 +24,7 @@ import javax.swing.JList;
  * @author Peter Bessada
  *
  */
-public class LibraryGUI {
+public class LibraryGUI extends JFrame {
 
 	private JFrame frmLibraryManagementSystem;
 	private JTextField textField_Email;
@@ -34,9 +33,6 @@ public class LibraryGUI {
 	private JPanel panel11 = new JPanel();
 	private JLabel lblLabel_Invalid = new JLabel("Invalid Email or Password, Please try again.");
 	static LibraryGUI window = new LibraryGUI();
-	private JTextField textField_FullName;
-	
-	private MemberRepository memberRepository;
 
 	/**
 	 * Launch the application.
@@ -45,10 +41,12 @@ public class LibraryGUI {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					// LibraryGUI window = new LibraryGUI();
-				
-					window.frmLibraryManagementSystem.setVisible(true);
+				    LibraryGUI window = new LibraryGUI();
 					window.frmLibraryManagementSystem.setLocationRelativeTo(null);
+					window.frmLibraryManagementSystem.setVisible(true);
+				
+					
+				
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -105,33 +103,23 @@ public class LibraryGUI {
 		panel.add(lblLabel_Invalid);
 		lblLabel_Invalid.setVisible(false);
 
-		JLabel lblLabel_FullName = new JLabel("Full Name");
-		lblLabel_FullName.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblLabel_FullName.setBounds(32, 144, 147, 20);
-		panel.add(lblLabel_FullName);
-
-		textField_FullName = new JTextField();
-		textField_FullName.setColumns(10);
-		textField_FullName.setBounds(106, 137, 465, 29);
-		panel.add(textField_FullName);
-
 		JLabel lblLabel_Email = new JLabel("Email");
 		lblLabel_Email.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblLabel_Email.setBounds(32, 180, 147, 20);
+		lblLabel_Email.setBounds(32, 146, 147, 20);
 		panel.add(lblLabel_Email);
 
 		textField_Email = new JTextField();
-		textField_Email.setBounds(106, 177, 465, 29);
+		textField_Email.setBounds(106, 146, 465, 29);
 		panel.add(textField_Email);
 		textField_Email.setColumns(10);
 
 		JLabel lblPassword = new JLabel("Password");
 		lblPassword.setFont(new Font("Tahoma", Font.BOLD, 12));
-		lblPassword.setBounds(32, 220, 147, 20);
+		lblPassword.setBounds(32, 189, 147, 20);
 		panel.add(lblPassword);
 
 		passwordField = new JPasswordField();
-		passwordField.setBounds(106, 217, 465, 29);
+		passwordField.setBounds(106, 186, 465, 29);
 		panel.add(passwordField);
 		// passwordField.getText();
 
@@ -139,24 +127,24 @@ public class LibraryGUI {
 		btn_Login.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		btn_Login.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				try {
-					inputListenerForLoginButton();
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}// call
+				inputListenerForLoginButton();// call
 												// inputListenerForLoginButton
 												// method when "Login" button is
 												// pressed
 			}
 		});
-		btn_Login.setBounds(106, 268, 465, 29);
+		btn_Login.setBounds(106, 250, 465, 29);
 		panel.add(btn_Login);
 
 		JLabel lblLable_Visitor = new JLabel("Login as Vistor");
 		lblLable_Visitor.setFont(new Font("Tahoma", Font.PLAIN, 13));
-		lblLable_Visitor.setBounds(475, 308, 147, 20);
+		lblLable_Visitor.setBounds(464, 294, 147, 20);
 		panel.add(lblLable_Visitor);
+		
+		JLabel lblSignUp = new JLabel("Sign Up");
+		lblSignUp.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		lblSignUp.setBounds(396, 297, 46, 14);
+		panel.add(lblSignUp);
 
 		
 		
@@ -174,9 +162,22 @@ public class LibraryGUI {
 			}
 		});
 
+		
+		lblSignUp.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				// open the Sign up page
+				RegisterGUI R = new RegisterGUI();
+				frmLibraryManagementSystem.remove(panel11);
+				frmLibraryManagementSystem.getContentPane().add(R);			
+				frmLibraryManagementSystem.revalidate();
+				frmLibraryManagementSystem.repaint();
+
+
+			}
+		});
 	}
 
-	public void inputListenerForLoginButton() throws SQLException { // do what inside inputListener
+	public void inputListenerForLoginButton() { // do what inside inputListener
 												// when Login is pressed
 
 		String email = textField_Email.getText().toLowerCase(); // put the input
@@ -185,13 +186,11 @@ public class LibraryGUI {
 																// case
 		textField_Email.setText("");
 
-		String fullName = textField_FullName.getText(); // Full name
-		textField_FullName.setText("");
-
+	
 		String password = passwordField.getText();
 		passwordField.setText("");
 
-		Member m = new Member(email, password, fullName);
+		Member m = new Member(email, password);
 
 		if (!m.isEmailFormatCorrect(email) || password.equals("")) {
 			lblLabel_Invalid.setVisible(true);
@@ -199,7 +198,7 @@ public class LibraryGUI {
 			panel.repaint();
 		}
 
-		else if (m.isAdmin()) {
+		else if (m.isAdmin(email, password)) {
 			// view el admin Panel
 			AdminGUI admin = new AdminGUI();
 			frmLibraryManagementSystem.remove(panel11);
@@ -209,8 +208,9 @@ public class LibraryGUI {
 
 		}
 
-		else if (memberRepository.isMemberExists(email)) {
-			if (memberRepository.passwordMatchesForLogin(email, password)!= null) {
+		else if (m.isMemberExists(email, password)) {
+			if (m.isPasswordCorrect(email, password)) {
+			     // Login
 				// switch to the Book Frame
 				// TODO code to switch to the BooksGUI Panel
 
@@ -220,12 +220,13 @@ public class LibraryGUI {
 				panel.repaint();
 			}
 
-		} else {
-			// if it's not a member then add the member to the database (adding
-			// takes place in member class)
-			// TODO code to switch to the BooksGUI Panel
-
+		}  else {
+			lblLabel_Invalid.setVisible(true);
+			panel.revalidate();
+			panel.repaint();
 		}
 
 	}
+	
+	
 }
