@@ -1,13 +1,9 @@
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import javax.swing.JButton;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -21,6 +17,7 @@ import javax.swing.JTextField;
  * @author Peter
  *
  */
+@SuppressWarnings("serial")
 public class RegisterGUI extends JPanel {
 	private JPasswordField passwordField;
 	private JTextField textField_Email;
@@ -100,6 +97,7 @@ public class RegisterGUI extends JPanel {
 		add(lblLabel_Invalid);
 	}
 
+	@SuppressWarnings("deprecation")
 	public void inputListenerForRegisterButton() {
 
 		String email = textField_Email.getText().toLowerCase(); // put the input
@@ -114,7 +112,7 @@ public class RegisterGUI extends JPanel {
 		String password = passwordField.getText();
 		passwordField.setText("");
 
-		Member m = new Member(email, password);
+		Member m = new Member(email, password,fullName);
 
 		if (!m.isEmailFormatCorrect(email) || password.equals("")) {
 			lblLabel_Invalid.setVisible(true);

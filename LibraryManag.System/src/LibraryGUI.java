@@ -1,29 +1,24 @@
-import java.awt.EventQueue;
-
-import javax.swing.JFrame;
-import javax.swing.SwingUtilities;
-
-import java.awt.BorderLayout;
-import java.awt.CardLayout;
 import java.awt.Color;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.BorderFactory;
-import javax.swing.JButton;
+import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.ActionEvent;
-import java.awt.Font;
-import javax.swing.JFormattedTextField;
+import java.sql.SQLException;
+
+import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JPasswordField;
-import javax.swing.JList;
+import javax.swing.JTextField;
 
 /**
  * @author Peter Bessada
  *
  */
+@SuppressWarnings("serial")
 public class LibraryGUI extends JFrame {
 
 	private JFrame frmLibraryManagementSystem;
@@ -34,6 +29,8 @@ public class LibraryGUI extends JFrame {
 	private JLabel lblLabel_Invalid = new JLabel("Invalid Email or Password, Please try again.");
 	static LibraryGUI window = new LibraryGUI();
 
+	private MemberRepository memberRepository;
+
 	/**
 	 * Launch the application.
 	 */
@@ -41,12 +38,10 @@ public class LibraryGUI extends JFrame {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-				    LibraryGUI window = new LibraryGUI();
+					LibraryGUI window = new LibraryGUI();
 					window.frmLibraryManagementSystem.setLocationRelativeTo(null);
 					window.frmLibraryManagementSystem.setVisible(true);
-				
-					
-				
+
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -59,6 +54,7 @@ public class LibraryGUI extends JFrame {
 	 */
 	public LibraryGUI() {
 		initialize();
+		memberRepository = new MemberRepository();
 	}
 
 	/**
@@ -127,7 +123,12 @@ public class LibraryGUI extends JFrame {
 		btn_Login.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		btn_Login.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				inputListenerForLoginButton();// call
+				try {
+					inputListenerForLoginButton();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}// call
 												// inputListenerForLoginButton
 												// method when "Login" button is
 												// pressed
@@ -140,14 +141,12 @@ public class LibraryGUI extends JFrame {
 		lblLable_Visitor.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblLable_Visitor.setBounds(464, 294, 147, 20);
 		panel.add(lblLable_Visitor);
-		
+
 		JLabel lblSignUp = new JLabel("Sign Up");
 		lblSignUp.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblSignUp.setBounds(396, 297, 46, 14);
 		panel.add(lblSignUp);
 
-		
-		
 		// if I pressed "Login as Vistor" Label--> then I will open the books
 		// TODO switch to the Vistor View
 		lblLable_Visitor.addMouseListener(new MouseAdapter() {
@@ -162,23 +161,24 @@ public class LibraryGUI extends JFrame {
 			}
 		});
 
-		
 		lblSignUp.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				// open the Sign up page
 				RegisterGUI R = new RegisterGUI();
 				frmLibraryManagementSystem.remove(panel11);
-				frmLibraryManagementSystem.getContentPane().add(R);			
+				frmLibraryManagementSystem.getContentPane().add(R);
 				frmLibraryManagementSystem.revalidate();
 				frmLibraryManagementSystem.repaint();
-
 
 			}
 		});
 	}
 
-	public void inputListenerForLoginButton() { // do what inside inputListener
-												// when Login is pressed
+	@SuppressWarnings("unused")
+	public void inputListenerForLoginButton() throws SQLException { // do what
+																	// inside
+																	// inputListener
+		// when Login is pressed
 
 		String email = textField_Email.getText().toLowerCase(); // put the input
 																// email String
@@ -186,47 +186,42 @@ public class LibraryGUI extends JFrame {
 																// case
 		textField_Email.setText("");
 
-	
+		@SuppressWarnings("deprecation")
 		String password = passwordField.getText();
 		passwordField.setText("");
 
-		Member m = new Member(email, password);
+		Member m = memberRepository.passwordMatchesForLogin(email, password);
 
 		if (!m.isEmailFormatCorrect(email) || password.equals("")) {
 			lblLabel_Invalid.setVisible(true);
 			panel.revalidate();
 			panel.repaint();
+			return;
 		}
 
-		else if (m.isAdmin(email, password)) {
-			// view el admin Panel
-			AdminGUI admin = new AdminGUI();
-			frmLibraryManagementSystem.remove(panel11);
-			frmLibraryManagementSystem.getContentPane().add(admin);
-			frmLibraryManagementSystem.revalidate();
-			frmLibraryManagementSystem.repaint();
-
-		}
-
-		else if (m.isMemberExists(email, password)) {
-			if (m.isPasswordCorrect(email, password)) {
-			     // Login
-				// switch to the Book Frame
-				// TODO code to switch to the BooksGUI Panel
+		if (m != null) {
+			if (m.isAdmin()) {
+				// view el admin Panel
+				AdminGUI admin = new AdminGUI();
+				frmLibraryManagementSystem.remove(panel11);
+				frmLibraryManagementSystem.getContentPane().add(admin);
+				frmLibraryManagementSystem.revalidate();
+				frmLibraryManagementSystem.repaint();
 
 			} else {
-				lblLabel_Invalid.setVisible(true);
-				panel.revalidate();
-				panel.repaint();
+				BooksGUI p = new BooksGUI();
+				frmLibraryManagementSystem.remove(panel11);
+				frmLibraryManagementSystem.getContentPane().add(p);
+				frmLibraryManagementSystem.revalidate();
+				frmLibraryManagementSystem.repaint();
+				//go to gui book
 			}
-
-		}  else {
+		} else {
 			lblLabel_Invalid.setVisible(true);
 			panel.revalidate();
 			panel.repaint();
 		}
 
 	}
-	
-	
+
 }
