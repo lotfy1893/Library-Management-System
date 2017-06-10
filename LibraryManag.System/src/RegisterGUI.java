@@ -2,6 +2,8 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -112,29 +114,36 @@ public class RegisterGUI extends JPanel {
 		String password = passwordField.getText();
 		passwordField.setText("");
 
-		Member m = new Member(email, password,fullName);
+		Member m = new Member(email, password, fullName);
 
-		if (!m.isEmailFormatCorrect(email) || password.equals("")) {
+		if (!isEmailFormatCorrect(email) || password.equals("")) {
 			lblLabel_Invalid.setVisible(true);
 			revalidate();
 			repaint();
 		}
 
-		else{
-			
-			    // add the new member to the database 
-				// takes place in member class)
-				// TODO code to switch to the BooksGUI Panel
-			
+		else {
+
+			// add the new member to the database
+			// takes place in member class)
+			// TODO code to switch to the BooksGUI Panel
+
 			BooksGUI p = new BooksGUI();
-		    this.removeAll();
-		    add(p);
+			this.removeAll();
+			add(p);
 			revalidate();
-		    repaint();
+			repaint();
 
-			} 
+		}
 
-		
+	}
 
+	public static boolean isEmailFormatCorrect(String email) {
+		Pattern p = Pattern.compile("\\b[a-z0-9._%-]+@[a-z0-9.-]+\\.[a-z]{2,4}\\b");
+		Matcher m = p.matcher(email);
+		if (m.find())
+			return true;
+		else
+			return false;
 	}
 }

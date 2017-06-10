@@ -6,6 +6,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -192,7 +194,7 @@ public class LibraryGUI extends JFrame {
 
 		Member m = memberRepository.passwordMatchesForLogin(email, password);
 
-		if (!m.isEmailFormatCorrect(email) || password.equals("")) {
+		if (!isEmailFormatCorrect(email) || password.equals("")) {
 			lblLabel_Invalid.setVisible(true);
 			panel.revalidate();
 			panel.repaint();
@@ -222,6 +224,15 @@ public class LibraryGUI extends JFrame {
 			panel.repaint();
 		}
 
+	}
+	
+	public static boolean isEmailFormatCorrect(String email) {
+		Pattern p = Pattern.compile("\\b[a-z0-9._%-]+@[a-z0-9.-]+\\.[a-z]{2,4}\\b");
+		Matcher m = p.matcher(email);
+		if (m.find())
+			return true;
+		else
+			return false;
 	}
 
 }

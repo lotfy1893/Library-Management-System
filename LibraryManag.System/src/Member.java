@@ -41,15 +41,6 @@ public class Member {
 		this.email = email;
 	}
 
-	public boolean isEmailFormatCorrect(String email) {
-		Pattern p = Pattern.compile("\\b[a-z0-9._%-]+@[a-z0-9.-]+\\.[a-z]{2,4}\\b");
-		Matcher m = p.matcher(email);
-		if (m.find())
-			return true;
-		else
-			return false;
-	}
-
 	public String getFullName() {
 		return fullName;
 	}

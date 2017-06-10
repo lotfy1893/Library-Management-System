@@ -22,13 +22,14 @@ try{
 	Statement myStmt = myConn.createStatement();
 	
 	// execute Sql query
-	ResultSet myRs = myStmt.executeQuery("select * from borrow");
+	ResultSet myRs = myStmt.executeQuery("select * from member where email = '"+"admin@admin.com'");
 
 	
-//	while (myRs.next()) {
-//		System.out.println(myRs.getString("borrow_id") + "," + myRs.getString("return_date"));
-//	}
+	while (myRs.next()) {
+		System.out.println(myRs.getString("email") + "," + myRs.getString("password"));
+	}
 
+	
 
 	Calendar calendar = Calendar.getInstance();
 	Date d = new Date(calendar.getTime().getTime());
