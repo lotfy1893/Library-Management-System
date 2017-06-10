@@ -125,6 +125,11 @@ public class MemberRepository {
 		return null;
 	}
 	
+	/**
+	 * this method returns all members in db
+	 * @return
+	 * @throws SQLException
+	 */
 	public ArrayList<Member> getAllMembers() throws SQLException{
 		Statement myStmt = myConn.createStatement();
 		ResultSet stringQuery = myStmt.executeQuery("SELECT * FROM member");
