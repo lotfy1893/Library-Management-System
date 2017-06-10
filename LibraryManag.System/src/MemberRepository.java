@@ -57,10 +57,9 @@ public class MemberRepository {
 			e1.printStackTrace();
 		}
 		try {
-			String type = member.isAdmin()? "Admin":"Member";
-			myStmt.executeUpdate("INSERT INTO member(full_name,email,type,password) VALUES('" + member.getFullName() + "','"
-					+ member.getEmail() + "','" + type + "','" + member.getPassword()+ "')");
-			System.out.println("hhallo peter");
+			String type = member.isAdmin() ? "Admin" : "Member";
+			myStmt.executeUpdate("INSERT INTO member(full_name,email,type,password) VALUES('" + member.getFullName()
+					+ "','" + member.getEmail() + "','" + type + "','" + member.getPassword() + "')");
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -69,10 +68,12 @@ public class MemberRepository {
 		}
 	}
 
-	public ArrayList<Book> getBorrowedBooks(int id) throws SQLException, ParseException {
+	public ArrayList<Book> getBorrowedBooks(String email) throws SQLException, ParseException {
 		// TODO query to retrive all the member books
 		Statement myStmt = myConn.createStatement();
-		ResultSet stringQuery = myStmt.executeQuery("");
+		ResultSet stringQuery = myStmt.executeQuery(
+				"select m.email,b.book_name,b.description,b.category,b.author,b.book_issue_date,b.entry_date,b.version,b.borrow_period,b.copies from book b,borrow r, member m where m.email='"
+						+ email + "' and m.member_id= r.member_id and r.book_id=b.book_id);");
 		ArrayList<Book> result = new ArrayList<>();
 
 		while (stringQuery.next()) {
@@ -114,7 +115,8 @@ public class MemberRepository {
 		if (!isMemberExists(email))
 			return null;
 		Statement myStmt = myConn.createStatement();
-		ResultSet stringQueryPassword = myStmt.executeQuery("SELECT * FROM member where email = '" + email + "'");
+		ResultSet stringQueryPassword = myStmt
+				.executeQuery("select email,password from member where email=+'" + email + "'");
 		while (stringQueryPassword.next()) {
 			String resultingPassword = stringQueryPassword.getString("password");
 
