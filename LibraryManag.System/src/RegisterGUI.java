@@ -2,6 +2,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.SQLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -30,6 +31,8 @@ public class RegisterGUI extends JPanel {
 	private JLabel lblSignUp;
 	private JLabel label_4;
 	private JLabel lblLabel_Invalid;
+	private JLabel lblEmailExists;
+	private MemberRepository memberRepository;
 
 	/**
 	 * Create the panel.
@@ -72,7 +75,12 @@ public class RegisterGUI extends JPanel {
 		btnRegister.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				inputListenerForRegisterButton();
+				try {
+					inputListenerForRegisterButton();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 
 			}
 		});
@@ -94,13 +102,22 @@ public class RegisterGUI extends JPanel {
 		lblLabel_Invalid = new JLabel("Invalid Email or Password, Please try again.");
 		lblLabel_Invalid.setForeground(new Color(204, 0, 0));
 		lblLabel_Invalid.setFont(new Font("Tahoma", Font.BOLD, 14));
-		lblLabel_Invalid.setBounds(263, 206, 394, 20);
+		lblLabel_Invalid.setBounds(263, 199, 394, 20);
 		lblLabel_Invalid.setVisible(false);
 		add(lblLabel_Invalid);
+
+		lblEmailExists = new JLabel("This email already exits in the System ");
+		lblEmailExists.setFont(new Font("Tahoma", Font.BOLD, 14));
+		lblEmailExists.setForeground(new Color(204, 0, 0));
+		lblEmailExists.setBounds(263, 222, 336, 14);
+		lblEmailExists.setVisible(false);
+		add(lblEmailExists);
+
+		memberRepository = new MemberRepository();
 	}
 
 	@SuppressWarnings("deprecation")
-	public void inputListenerForRegisterButton() {
+	public void inputListenerForRegisterButton() throws SQLException {
 
 		String email = textField_Email.getText().toLowerCase(); // put the input
 		// email String
@@ -114,26 +131,27 @@ public class RegisterGUI extends JPanel {
 		String password = passwordField.getText();
 		passwordField.setText("");
 
-		Member m = new Member(email, password, fullName);
-
+		Member newAddedMember = new Member(email, password, fullName);
+		System.out.println(newAddedMember.getFullName());
 		if (!isEmailFormatCorrect(email) || password.equals("")) {
 			lblLabel_Invalid.setVisible(true);
 			revalidate();
 			repaint();
-		}
-
-		else {
+		} else {
 
 			// add the new member to the database
 			// takes place in member class)
 			// TODO code to switch to the BooksGUI Panel
-
+			boolean addedToDB = memberRepository.registerNewMember(newAddedMember);
+			if (!addedToDB) {
+				lblEmailExists.setVisible(true);
+				return;
+			}
 			BooksGUI p = new BooksGUI();
 			this.removeAll();
 			add(p);
 			revalidate();
 			repaint();
-
 		}
 
 	}

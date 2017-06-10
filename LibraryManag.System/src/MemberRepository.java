@@ -25,7 +25,7 @@ public class MemberRepository {
 
 	public Member getMemberByEmail(String email) throws SQLException {
 		Statement myStmt = myConn.createStatement();
-		ResultSet stringQuery = myStmt.executeQuery("SELECT * FROM member WHERE email=" + email + ");");
+		ResultSet stringQuery = myStmt.executeQuery("SELECT * FROM member WHERE email='" + email + "'");
 		// TODO query to retrieve member all info by id
 
 		Member loggedInMember = null;
@@ -45,26 +45,28 @@ public class MemberRepository {
 
 	public boolean registerNewMember(Member member) throws SQLException {
 
-		if (isMemberExists(member.getEmail()))
+		if (isMemberExists(member.getEmail())) {
+			System.out.println("i am here");
 			return false;
+		}
 
 		Statement myStmt = null;
 		try {
 			myStmt = myConn.createStatement();
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		try {
-			myStmt.executeQuery("INSERT INTO member(full_name,email,type,password) VALUES(" + member.getFullName() + ","
-					+ member.getEmail() + "," + member.isAdmin() + "," + member.getFullName() + ");");
+			String type = member.isAdmin()? "Admin":"Member";
+			myStmt.executeUpdate("INSERT INTO member(full_name,email,type,password) VALUES('" + member.getFullName() + "','"
+					+ member.getEmail() + "','" + type + "','" + member.getPassword()+ "')");
+			System.out.println("hhallo peter");
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
+			System.out.println("exception catched from the ssql");
 			return false;
 		}
-		// TODO query to insert the new member in the db
-
 	}
 
 	public ArrayList<Book> getBorrowedBooks(int id) throws SQLException, ParseException {
@@ -101,7 +103,7 @@ public class MemberRepository {
 		// TODO query to see whether the member is in our db or not
 		Statement myStmt = myConn.createStatement();
 		ResultSet stringQuery = myStmt.executeQuery("SELECT * FROM member where email = '" + email + "'");
-		if (stringQuery == null || stringQuery.equals("")) {
+		if (!stringQuery.next()) {
 			return false;
 		}
 		return true;
@@ -117,36 +119,38 @@ public class MemberRepository {
 			String resultingPassword = stringQueryPassword.getString("password");
 
 			if (password.equals(resultingPassword)) {
-				return getMemberByEmail(email);
+				Member result = getMemberByEmail(email);
+				return result;
 			} else {
 				return null;
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * this method returns all members in db
+	 * 
 	 * @return
 	 * @throws SQLException
 	 */
-	public ArrayList<Member> getAllMembers() throws SQLException{
+	public ArrayList<Member> getAllMembers() throws SQLException {
 		Statement myStmt = myConn.createStatement();
 		ResultSet stringQuery = myStmt.executeQuery("SELECT * FROM member");
 		// TODO query to retrieve member all info by id
 		ArrayList<Member> allMembers = new ArrayList<>();
 		Member loggedInMember = null;
 		while (stringQuery.next()) {
-				String queryResultID = stringQuery.getString("member_id");
-				String queryResultFullName = stringQuery.getString("full_name");
-				String queryResultEmail = stringQuery.getString("email");
-				String queryResultType = stringQuery.getString("type");
-				String queryResultPassword = stringQuery.getString("password");
+			String queryResultID = stringQuery.getString("member_id");
+			String queryResultFullName = stringQuery.getString("full_name");
+			String queryResultEmail = stringQuery.getString("email");
+			String queryResultType = stringQuery.getString("type");
+			String queryResultPassword = stringQuery.getString("password");
 
-				loggedInMember = new Member(queryResultEmail, queryResultPassword, queryResultFullName);
-				loggedInMember.setId(Integer.parseInt(queryResultID));
-				loggedInMember.setAdmin(queryResultType.equalsIgnoreCase("member") ? false : true);
-				allMembers.add(loggedInMember);
+			loggedInMember = new Member(queryResultEmail, queryResultPassword, queryResultFullName);
+			loggedInMember.setId(Integer.parseInt(queryResultID));
+			loggedInMember.setAdmin(queryResultType.equalsIgnoreCase("member") ? false : true);
+			allMembers.add(loggedInMember);
 		}
 		return allMembers;
 	}

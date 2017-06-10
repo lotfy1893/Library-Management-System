@@ -1,6 +1,4 @@
 import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @author Praktikant05
@@ -18,6 +16,7 @@ public class Member {
 
 		this.email = email;
 		this.password = password;
+		this.fullName = fullName;
 	}
 	
 
