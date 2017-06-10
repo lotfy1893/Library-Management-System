@@ -3,6 +3,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -76,7 +77,12 @@ public class RegisterGUI extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 
 				try {
-					inputListenerForRegisterButton();
+					try {
+						inputListenerForRegisterButton();
+					} catch (ParseException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -117,7 +123,7 @@ public class RegisterGUI extends JPanel {
 	}
 
 	@SuppressWarnings("deprecation")
-	public void inputListenerForRegisterButton() throws SQLException {
+	public void inputListenerForRegisterButton() throws SQLException, ParseException {
 
 		String email = textField_Email.getText().toLowerCase(); // put the input
 		// email String
@@ -147,7 +153,7 @@ public class RegisterGUI extends JPanel {
 				lblEmailExists.setVisible(true);
 				return;
 			}
-			BooksGUI p = new BooksGUI();
+			BooksGUI p = new BooksGUI(newAddedMember);
 			this.removeAll();
 			add(p);
 			revalidate();

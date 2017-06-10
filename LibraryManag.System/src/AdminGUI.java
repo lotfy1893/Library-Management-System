@@ -3,6 +3,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.ArrayList;
 
 import javax.swing.SwingUtilities;
 import javax.swing.DefaultListModel;
@@ -45,24 +48,43 @@ public class AdminGUI extends JPanel {
 	private JScrollPane scrollPane_LibraryBooks;
 	private JScrollPane scrollPane_ViewUser;
 	private JTable table_UserBooks;
+	private BookRepository bookRepository;
+	private MemberRepository memberRepository;
 
 	/**
 	 * Create the panel.
+	 * 
+	 * @throws ParseException
+	 * @throws SQLException
 	 */
 
-	public AdminGUI() {
-
+	public AdminGUI() throws SQLException, ParseException {
+		bookRepository = new BookRepository();
+		memberRepository = new MemberRepository();
 		setBackground(new Color(51, 102, 102));
 		setBounds(0, 0, 950, 575);
 		setLayout(null);
 
 		// ----------------------- related to the LibraryBook tab
 
-		String[][] books = { { "Math_book", "peter", "A" }, { "Science_book", "lotfy", "N" },
-				{ "statistics_book", "bassem", "A" } };
+		// String[][] books = { { "Math_book", "peter", "A" }, { "Science_book",
+		// "lotfy", "N" },
+		// { "statistics_book", "bassem", "A" } };
 
-		DefaultTableModel userTableModel = new DefaultTableModel(books, new String[] { "Book name", "Author name",
-				"Availability", "Category", "Issue Date", "No. of Copies" }) {
+		ArrayList<Book> allBooks = bookRepository.getAllBooksInLibrary();
+		String[][] allBooksArrayForTable = new String[allBooks.size()][6];
+		for (int i = 0; i < allBooks.size(); i++) {
+			String avaliablity = allBooks.get(i).getNumberOfCopies() > 0 ? "A" : "N";
+			allBooksArrayForTable[i][0] = allBooks.get(i).getName();
+			allBooksArrayForTable[i][1] = allBooks.get(i).getAuthor();
+			allBooksArrayForTable[i][2] = avaliablity;
+			allBooksArrayForTable[i][3] = allBooks.get(i).getCategory();
+			allBooksArrayForTable[i][4] = allBooks.get(i).getBookIssueDate() + "";
+			allBooksArrayForTable[i][5] = allBooks.get(i).getNumberOfCopies() + "";
+		}
+
+		DefaultTableModel userTableModel = new DefaultTableModel(allBooksArrayForTable, new String[] { "Book name",
+				"Author name", "Availability", "Category", "Issue Date", "No. of Copies" }) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
@@ -73,9 +95,24 @@ public class AdminGUI extends JPanel {
 
 		// ----------------------- related to the viewUser tab
 
-		String[][] myUsers = { { "peter", "peter@jku.com" }, { "Lotfy", "Lotfy@jku.com" },
-				{ "Bassem", "Bassem@jku.com" } };
-		DefaultTableModel userTableModel_MyUsers = new DefaultTableModel(myUsers,
+		// String[][] myUsers = { { "peter", "peter@jku.com" }, { "Lotfy",
+		// "Lotfy@jku.com" },
+		// { "Bassem", "Bassem@jku.com" } };
+
+		ArrayList<Member> allUsers = memberRepository.getAllMembers();
+		String[][] allUsersForTable = new String[allUsers.size()][2];
+
+		for (int i = 0; i < allUsers.size(); i++) {
+			if (allUsers.get(i).getFullName() == null || allUsers.get(i).getFullName().equalsIgnoreCase("null")){
+				allUsersForTable[i][0] = "Unknown Name";
+			}else{
+				allUsersForTable[i][0] = allUsers.get(i).getFullName();
+			}
+				
+			allUsersForTable[i][1] = allUsers.get(i).getEmail();
+		}
+
+		DefaultTableModel userTableModel_MyUsers = new DefaultTableModel(allUsersForTable,
 				new String[] { "User Full Name", "email Address" }) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
@@ -169,8 +206,20 @@ public class AdminGUI extends JPanel {
 		String[][] userBooks = { { "Math_book", "peter", "A" }, { "Science_book", "lotfy", "N" },
 				{ "statistics_book", "bassem", "A" } };
 
+//		ArrayList<Book> myBooks = memberRepository.getBorrowedBooks(this.loggedInMember.getEmail());
+//		String[][] mybooksTest = new String[myBooks.size()][4];
+//		for (int i = 0; i < myBooks.size(); i++) {
+//			int bookId = myBooks.get(i).getId();
+//			int memberId = this.loggedInMember.getId();
+//			Date returnDate = bookRepository.getBookReturnDate(memberId, bookId);
+//			mybooksTest[i][0] = myBooks.get(i).getName();
+//			mybooksTest[i][1] = myBooks.get(i).getAuthor();
+//			mybooksTest[i][2] = myBooks.get(i).getCategory();
+//			mybooksTest[i][3] = returnDate + "";
+//		}
+		
 		DefaultTableModel userTableModel_UserBooks = new DefaultTableModel(userBooks,
-				new String[] { "Book Name", "Author Name", "Category", "Borrow Date", "Return Date" }) {
+				new String[] { "Book Name", "Author Name", "Category", "Return Date" }) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
@@ -232,8 +281,8 @@ public class AdminGUI extends JPanel {
 
 		table_LibraryBooks.setModel(userTableModel);
 		table_LibraryBooks.getColumnModel().getColumn(0).setPreferredWidth(236);
-		table_LibraryBooks.getColumnModel().getColumn(3).setPreferredWidth(83);
-		table_LibraryBooks.getColumnModel().getColumn(4).setPreferredWidth(83);
+		table_LibraryBooks.getColumnModel().getColumn(1).setPreferredWidth(90);
+		table_LibraryBooks.getColumnModel().getColumn(2).setPreferredWidth(50);
 		scrollPane_LibraryBooks.setViewportView(table_LibraryBooks);
 
 		// ----------------------------------------------- View Users Page

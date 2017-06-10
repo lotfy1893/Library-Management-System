@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 /**
  * @author Praktikant05
  */
@@ -10,7 +8,6 @@ public class Member {
 	private String password; // used to validate the user
 	private boolean isAdmin;
 	private String fullName;
-	private ArrayList<Book> books;
 
 	public Member(String email, String password,String fullName) {
 
@@ -46,28 +43,6 @@ public class Member {
 
 	public void setFullName(String fullName) {
 		this.fullName = fullName;
-	}
-
-	public ArrayList<Book> getBooks() {
-		return books;
-	}
-
-	public void setBooks(ArrayList<Book> books) {
-		this.books = books;
-	}
-
-	public void addBook(Book book) {
-		if (books.size() == 3) {
-			System.out.println("Allowed 3 books only for each member.");
-			return;
-		}
-		books.add(book);
-	}
-	public void returnBook(int id){
-		for(Book book: books){
-			if(book.getId() == id)
-				books.remove(book);
-		}
 	}
 
 	public int getId() {

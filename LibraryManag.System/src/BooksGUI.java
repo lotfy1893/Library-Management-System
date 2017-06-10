@@ -1,30 +1,26 @@
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.ArrayList;
 
-import javax.swing.SwingUtilities;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JScrollBar;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.AbstractListModel;
-import java.awt.BorderLayout;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import java.awt.ScrollPane;
-import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.JTabbedPane;
-import java.awt.Font;
-import javax.swing.JTable;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -42,21 +38,42 @@ public class BooksGUI extends JPanel {
 	private JScrollPane scrollPane_LibraryBooks;
 	private JScrollPane scrollPane_MyBooks;
 	private JLabel label_LogOut;
+	private Member loggedInMember;
+	private MemberRepository memberRepository;
+	private BookRepository bookRepository;
 
 	/**
 	 * Create the panel.
+	 * 
+	 * @throws ParseException
+	 * @throws SQLException
 	 */
 
-	public BooksGUI() {
-
+	@SuppressWarnings("serial")
+	public BooksGUI(Member loggedInMember) throws SQLException, ParseException {
+		this.loggedInMember = loggedInMember;
+		bookRepository = new BookRepository();
+		memberRepository = new MemberRepository();
 		setBackground(new Color(51, 102, 102));
 		setBounds(0, 0, 950, 575);
 		setLayout(null);
 
 		// ---------- related to the book view page
 		String[][] mybooks = { { "Math_book", "peter" }, { "Science_book", "lotfy" }, { "statistics_book", "bassem" } };
+		
+//		ArrayList<Book> myBooks = memberRepository.getBorrowedBooks(this.loggedInMember.getEmail());
+//		String[][] mybooksTest = new String[myBooks.size()][4];
+//		for (int i = 0; i < myBooks.size(); i++) {
+//			int bookId = myBooks.get(i).getId();
+//			int memberId = this.loggedInMember.getId();
+//			Date returnDate = bookRepository.getBookReturnDate(memberId, bookId);
+//			mybooksTest[i][0] = myBooks.get(i).getName();
+//			mybooksTest[i][1] = myBooks.get(i).getAuthor();
+//			mybooksTest[i][2] = myBooks.get(i).getCategory();
+//			mybooksTest[i][3] = returnDate + "";
+//		}
 		DefaultTableModel userTableModel_Mybooks = new DefaultTableModel(mybooks,
-				new String[] { "Book Name", "Author Name", "Category", "Borrow Date", "Return Date" }) {
+				new String[] { "Book Name", "Author Name", "Category", "Return Date" }) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
@@ -134,11 +151,24 @@ public class BooksGUI extends JPanel {
 		table_LibraryBooks.setFocusable(false);
 		table_LibraryBooks.setRowSelectionAllowed(true);
 
-		String[][] books = { { "Math_book", "peter", "A" }, { "Science_book", "lotfy", "N" },
-				{ "statistics_book", "bassem", "A" } };
+		// String[][] books = { { "Math_book", "peter", "A" }, { "Science_book",
+		// "lotfy", "N" },
+		// { "statistics_book", "bassem", "A" } };
 
-		DefaultTableModel userTableModel = new DefaultTableModel(books, new String[] { "Book name", "Author name",
-				"Availability", "Category", "Issue Date", "No. of Copies" }) {
+		ArrayList<Book> allBooks = bookRepository.getAllBooksInLibrary();
+		String[][] allBooksArrayForTable = new String[allBooks.size()][6];
+		for (int i = 0; i < allBooks.size(); i++) {
+			String avaliablity = allBooks.get(i).getNumberOfCopies() > 0 ? "A" : "N";
+			allBooksArrayForTable[i][0] = allBooks.get(i).getName();
+			allBooksArrayForTable[i][1] = allBooks.get(i).getAuthor();
+			allBooksArrayForTable[i][2] = avaliablity;
+			allBooksArrayForTable[i][3] = allBooks.get(i).getCategory();
+			allBooksArrayForTable[i][4] = allBooks.get(i).getBookIssueDate() + "";
+			allBooksArrayForTable[i][5] = allBooks.get(i).getNumberOfCopies() + "";
+		}
+
+		DefaultTableModel userTableModel = new DefaultTableModel(allBooksArrayForTable, new String[] { "Book name",
+				"Author name", "Availability", "Category", "Issue Date", "No. of Copies" }) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
 				return false;
@@ -197,8 +227,8 @@ public class BooksGUI extends JPanel {
 
 		table_MyBooks.setModel(userTableModel_Mybooks);
 		table_MyBooks.getColumnModel().getColumn(0).setPreferredWidth(236);
+		table_MyBooks.getColumnModel().getColumn(1).setPreferredWidth(83);
 		table_MyBooks.getColumnModel().getColumn(3).setPreferredWidth(83);
-		table_MyBooks.getColumnModel().getColumn(4).setPreferredWidth(83);
 		scrollPane_MyBooks.setViewportView(table_MyBooks);
 
 		// -------------------------------------------------------------
@@ -210,6 +240,7 @@ public class BooksGUI extends JPanel {
 
 		JButton btn_Search = new JButton("Search");
 		btn_Search.addActionListener(new ActionListener() {
+
 			public void actionPerformed(ActionEvent e) {
 
 				String searchInput = textField_Search.getText();
@@ -224,11 +255,13 @@ public class BooksGUI extends JPanel {
 		btn_Search.setBounds(614, 119, 89, 23);
 		add(btn_Search);
 
-		String x = "Peter Bessada"; // I will get the Full name of the user here
+		String x = this.loggedInMember.getFullName(); // I will get the Full
+														// name of the user here
 		JLabel lblNewLabel_UserName = new JLabel(x);
 		lblNewLabel_UserName.setForeground(Color.GREEN);
 		lblNewLabel_UserName.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 25));
 		lblNewLabel_UserName.setBounds(64, 54, 356, 44);
+
 		add(lblNewLabel_UserName);
 
 		label_LogOut = new JLabel("Log Out");

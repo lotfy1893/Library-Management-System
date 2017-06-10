@@ -4,7 +4,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -26,7 +25,7 @@ public class BookRepository {
 		ResultSet stringQuery = myStmt.executeQuery(
 				"select * from book where book_name Like '%" + name + "%' And author Like '%" + author + "%';");
 
-		if (stringQuery != null) {
+		while(stringQuery.next()) {
 			String desc = stringQuery.getString("description");
 			String category = stringQuery.getString("category");
 			String bookIssue = stringQuery.getString("book_issue_date");
@@ -36,11 +35,11 @@ public class BookRepository {
 			String copies = stringQuery.getString("copies");
 
 			Date issue = (Date) new SimpleDateFormat("yyyy/dd/MM").parse(bookIssue);
-			Timestamp tsEntry = Timestamp.valueOf(entryDate);
+			//Timestamp tsEntry = Timestamp.valueOf(entryDate);
 			int vers = Integer.parseInt(version);
 			int borrow = Integer.parseInt(borrowPeriod);
 
-			Book book = new Book(name, desc, category, author, issue, tsEntry, vers, borrow, Integer.parseInt(copies));
+			Book book = new Book(name, desc, category, author, issue, vers, borrow, Integer.parseInt(copies));
 			book.setId(Integer.parseInt(stringQuery.getString("book_name")));
 
 			return book;
@@ -56,10 +55,10 @@ public class BookRepository {
 		if (member.isAdmin()) {
 			Statement myStmt = myConn.createStatement();
 			myStmt.executeUpdate(
-					"INSERT INTO `book` (book_name,description,category,author,book_issue_date,version,copies) VALUES ('"
+					"INSERT INTO `book` (book_name,description,category,author,book_issue_date,version,copies,borrow_period) VALUES ('"
 							+ book.getName() + "','" + book.getDescription() + "','" + book.getCategory() + "','"
 							+ book.getAuthor() + "','" + book.getBookIssueDate() + "','" + book.getVersion() + "','"
-							+ book.getNumberOfCopies() + "')");
+							+ book.getNumberOfCopies() + "','" + book.getBorrowPeriod() + "')");
 			return true;
 		}
 		return false;
@@ -114,8 +113,11 @@ public class BookRepository {
 	public void inserBorrowAndReturnDateForABorrowedBook(Date borrow, Date returnDate, Book borrowBook)
 			throws SQLException {
 		Statement myStmt = myConn.createStatement();
-//		myStmt.executeUpdate("INSERT INTO member(full_name,email,type,password) VALUES('" + member.getFullName() + "','"
-//				+ member.getEmail() + "','" + member.isAdmin() + "','" + member.getFullName() + "')");
+		// myStmt.executeUpdate("INSERT INTO
+		// member(full_name,email,type,password) VALUES('" +
+		// member.getFullName() + "','"
+		// + member.getEmail() + "','" + member.isAdmin() + "','" +
+		// member.getFullName() + "')");
 		myStmt.executeUpdate("");
 
 		// insert those dates given the combination of authoer and book title
@@ -136,4 +138,67 @@ public class BookRepository {
 		myStmt.executeQuery("");
 	}
 
+	public boolean borrowBook(Member borrower, Book borrowedBook) {
+		try {
+			Statement myStmt = myConn.createStatement();
+			myStmt.executeUpdate("");
+			// insert into borrow date the date of today ONLY DATE NOT
+			// TIME!!!!!!!!!
+			// query to insert a borrowed book for this member
+			// status of borrow entry is active nowN
+			this.decrementCopiesOfBook(borrowedBook);
+			return true;
+		} catch (SQLException ex) {
+			return false;
+		}
+	}
+
+	public boolean returnBook(Member borrower, Book borrowedBook) {
+		try {
+			Statement myStmt = myConn.createStatement();
+			myStmt.executeUpdate("");
+			// query to update only the entry in borrow where id of book and id
+			// of member and status is Active set the status to inactive
+			this.incrementCopiesOfBook(borrowedBook);
+			return true;
+		} catch (SQLException ex) {
+			return false;
+		}
+	}
+
+	public ArrayList<Book> getAllBooksInLibrary() throws SQLException, ParseException{
+		Statement myStmt = myConn.createStatement();
+		ResultSet stringQuery = myStmt.executeQuery("SELECT * from book");
+		ArrayList<Book> results = new ArrayList<>();
+		
+		while(stringQuery.next()){
+		String name = stringQuery.getString("book_name");	
+		String author = stringQuery.getString("author");
+		String desc = stringQuery.getString("description");
+		String category = stringQuery.getString("category");
+		String bookIssue = stringQuery.getString("book_issue_date");
+		String entryDate = stringQuery.getString("entry_date");
+		String version = stringQuery.getString("version");
+		String borrowPeriod = stringQuery.getString("borrow_period");
+		String copies = stringQuery.getString("copies");
+
+		Date issue = new Date(new SimpleDateFormat("yyyy-MM-dd").parse(bookIssue).getTime());
+//		Timestamp tsEntry = Timestamp.valueOf(entryDate);
+		int vers = Integer.parseInt(version);
+		int borrow = Integer.parseInt(borrowPeriod);
+
+		Book book = new Book(name, desc, category, author, issue,vers, borrow, Integer.parseInt(copies));
+		book.setId(Integer.parseInt(stringQuery.getString("book_id")));
+		results.add(book);
+		}
+		return results;
+	}
+	
+	public Date getBookReturnDate(int memberId, int bookId) throws SQLException {
+		Statement myStmt = myConn.createStatement();
+		myStmt.executeUpdate("");
+		// query to the borrow table to get the return date given member id and
+		// book id to get a unique borrow entry and status is active
+		return null;
+	}
 }

@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+import java.text.ParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -126,7 +127,12 @@ public class LibraryGUI extends JFrame {
 		btn_Login.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					inputListenerForLoginButton();
+					try {
+						inputListenerForLoginButton();
+					} catch (ParseException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -154,11 +160,11 @@ public class LibraryGUI extends JFrame {
 		lblLable_Visitor.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				// open the vistor view frame
-				BooksGUI p = new BooksGUI();
-				frmLibraryManagementSystem.remove(panel11);
-				frmLibraryManagementSystem.getContentPane().add(p);
-				frmLibraryManagementSystem.revalidate();
-				frmLibraryManagementSystem.repaint();
+//				BooksGUI p = new BooksGUI();
+//				frmLibraryManagementSystem.remove(panel11);
+//				frmLibraryManagementSystem.getContentPane().add(p);
+//				frmLibraryManagementSystem.revalidate();
+//				frmLibraryManagementSystem.repaint();
 
 			}
 		});
@@ -177,7 +183,7 @@ public class LibraryGUI extends JFrame {
 	}
 
 	@SuppressWarnings("unused")
-	public void inputListenerForLoginButton() throws SQLException { // do what
+	public void inputListenerForLoginButton() throws SQLException, ParseException { // do what
 																	// inside
 																	// inputListener
 		// when Login is pressed
@@ -211,7 +217,7 @@ public class LibraryGUI extends JFrame {
 				frmLibraryManagementSystem.repaint();
 
 			} else {
-				BooksGUI p = new BooksGUI();
+				BooksGUI p = new BooksGUI(m);
 				frmLibraryManagementSystem.remove(panel11);
 				frmLibraryManagementSystem.getContentPane().add(p);
 				frmLibraryManagementSystem.revalidate();

@@ -24,7 +24,7 @@ public class Book {
 	private int version;
 	private int borrowPeriod; //in days
 
-	public Book(String name, String description, String category, String author, Date issue, Timestamp entry,
+	public Book(String name, String description, String category, String author, Date issue,
 			int version, int borrowPeriod, int no) {
 
 		this.name = name;
@@ -32,7 +32,7 @@ public class Book {
 		this.setCategory(category);
 		this.author = author;
 		this.bookIssueDate = issue;
-		this.bookEntryDate = entry;
+//		this.bookEntryDate = entry;
 		this.version = version;
 		this.borrowPeriod = borrowPeriod;
 		this.setNumberOfCopies(no);

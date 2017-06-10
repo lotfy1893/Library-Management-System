@@ -42,6 +42,11 @@ public class MemberRepository {
 		}
 		return loggedInMember;
 	}
+	
+	public int getIdMemberByEmail(String email) throws SQLException{
+		Member m = getMemberByEmail(email);
+		return m.getId();
+	}
 
 	public boolean registerNewMember(Member member) throws SQLException {
 
@@ -73,7 +78,7 @@ public class MemberRepository {
 		Statement myStmt = myConn.createStatement();
 		ResultSet stringQuery = myStmt.executeQuery(
 				"select m.email,b.book_name,b.description,b.category,b.author,b.book_issue_date,b.entry_date,b.version,b.borrow_period,b.copies from book b,borrow r, member m where m.email='"
-						+ email + "' and m.member_id= r.member_id and r.book_id=b.book_id);");
+						+ email + "' and m.member_id= r.member_id and r.book_id=b.book_id);"); // add where also the status is Active 
 		ArrayList<Book> result = new ArrayList<>();
 
 		while (stringQuery.next()) {
@@ -88,11 +93,11 @@ public class MemberRepository {
 			String copies = stringQuery.getString("copies");
 
 			Date issue = (Date) new SimpleDateFormat("yyyy/dd/MM").parse(bookIssue);
-			Timestamp tsEntry = Timestamp.valueOf(entryDate);
+		//	Timestamp tsEntry = Timestamp.valueOf(entryDate);
 			int vers = Integer.parseInt(version);
 			int borrow = Integer.parseInt(borrowPeriod);
 
-			Book book = new Book(name, desc, category, author, issue, tsEntry, vers, borrow, Integer.parseInt(copies));
+			Book book = new Book(name, desc, category, author, issue, vers, borrow, Integer.parseInt(copies));
 			book.setId(Integer.parseInt(stringQuery.getString("book_name")));
 			result.add(book);
 		}
