@@ -25,20 +25,20 @@ public class MemberRepository {
 
 	public Member getMemberByEmail(String email) throws SQLException {
 		Statement myStmt = myConn.createStatement();
-		ResultSet stringQuery = myStmt.executeQuery("SELECT * FROM member where email = '" + email + "'");
+		ResultSet stringQuery = myStmt.executeQuery("SELECT * FROM member WHERE email=" + email + ");");
 		// TODO query to retrieve member all info by id
 
 		Member loggedInMember = null;
 		while (stringQuery.next()) {
-				String queryResultID = stringQuery.getString("member_id");
-				String queryResultFullName = stringQuery.getString("full_name");
-				String queryResultEmail = stringQuery.getString("email");
-				String queryResultType = stringQuery.getString("type");
-				String queryResultPassword = stringQuery.getString("password");
+			String queryResultID = stringQuery.getString("member_id");
+			String queryResultFullName = stringQuery.getString("full_name");
+			String queryResultEmail = stringQuery.getString("email");
+			String queryResultType = stringQuery.getString("type");
+			String queryResultPassword = stringQuery.getString("password");
 
-				loggedInMember = new Member(queryResultEmail, queryResultPassword, queryResultFullName);
-				loggedInMember.setId(Integer.parseInt(queryResultID));
-				loggedInMember.setAdmin(queryResultType.equalsIgnoreCase("member") ? false : true);
+			loggedInMember = new Member(queryResultEmail, queryResultPassword, queryResultFullName);
+			loggedInMember.setId(Integer.parseInt(queryResultID));
+			loggedInMember.setAdmin(queryResultType.equalsIgnoreCase("member") ? false : true);
 		}
 		return loggedInMember;
 	}
@@ -48,9 +48,21 @@ public class MemberRepository {
 		if (isMemberExists(member.getEmail()))
 			return false;
 
-		Statement myStmt = myConn.createStatement();
-		myStmt.executeQuery("");
-		return true;
+		Statement myStmt = null;
+		try {
+			myStmt = myConn.createStatement();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			myStmt.executeQuery("INSERT INTO member(full_name,email,type,password) VALUES(" + member.getFullName() + ","
+					+ member.getEmail() + "," + member.isAdmin() + "," + member.getFullName() + ");");
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
 		// TODO query to insert the new member in the db
 
 	}
