@@ -23,7 +23,7 @@ public class BookRepository {
 
 	public Book getBookByAuthorAndName(String name, String author) throws SQLException, ParseException {
 		Statement myStmt = myConn.createStatement();
-		ResultSet stringQuery = myStmt.executeQuery("");
+		ResultSet stringQuery = myStmt.executeQuery("select * from book where book_name Like '%"+ name +"%' And author Like '%"+ author +"%';");
 		
 
 		if(stringQuery != null){
@@ -55,7 +55,7 @@ public class BookRepository {
 		}
 		if (member.isAdmin()) {
 			Statement myStmt = myConn.createStatement();
-			myStmt.executeQuery("");
+			myStmt.executeUpdate("INSERT INTO `book` (book_name,description,category,author,book_issue_date,version,copies) VALUES ('" +book.getName()+"','"+book.getDescription()+"','"+book.getCategory()+"','"+book.getAuthor()+"','"+book.getBookIssueDate()+"','"+book.getVersion()+"','"+book.getNumberOfCopies()+"');" );
 			return true;
 		}
 		return false;
@@ -63,7 +63,7 @@ public class BookRepository {
 
 	public ArrayList<Book> findBooksByCategory(String category) throws SQLException {
 		Statement myStmt = myConn.createStatement();
-		ResultSet queryString = myStmt.executeQuery("");
+		ResultSet queryString = myStmt.executeQuery("select * from book where category='"+category+"');");
 		// TODO query to retrieve all book(s) with the input category
 
 		return null;
@@ -72,7 +72,7 @@ public class BookRepository {
 	
 	public ArrayList<Book> findBooksByAuthor(String author) throws SQLException {
 		Statement myStmt = myConn.createStatement();
-		ResultSet queryString = myStmt.executeQuery("");
+		ResultSet queryString = myStmt.executeQuery("select * from book where author='"+author+"');");
 		// TODO query to retrieve all book(s) with the input author name all combinations
 		// for example John R. Wagner or John Wagner or Wagner R. ignoring the cases of the letters
 
@@ -82,7 +82,7 @@ public class BookRepository {
 	
 	public ArrayList<Book> findBooksByName(String name) throws SQLException {
 		Statement myStmt = myConn.createStatement();
-		ResultSet queryString = myStmt.executeQuery("");
+		ResultSet queryString = myStmt.executeQuery("select * from book where book_name like '"+name+"');");
 		// TODO query to retrieve all book(s) with the input name
 
 		return null;
@@ -92,7 +92,7 @@ public class BookRepository {
 	@SuppressWarnings("deprecation")
 	public Date calculateReturnDate(Book book, Date borrowDate) throws SQLException{
 		Statement myStmt = myConn.createStatement();
-		ResultSet stringQuery = myStmt.executeQuery("");
+		ResultSet stringQuery = myStmt.executeQuery("select return_date from borrow");
 		//query to get the period borrow of the book
 		if(stringQuery != null){
 			int numberofDays = Integer.parseInt(stringQuery+"");
@@ -107,8 +107,8 @@ public class BookRepository {
 	//insert return date
 	public void inserBorrowAndReturnDateForABorrowedBook(Date borrow, Date returnDate, Book borrowBook) throws SQLException{
 		Statement myStmt = myConn.createStatement();
-		myStmt.executeQuery("");
-		myStmt.executeQuery("");
+		myStmt.executeUpdate("INSERT INTO member(full_name,email,type,password) VALUES('" + member.getFullName() + "','"+ member.getEmail() + "','" + member.isAdmin() + "','" + member.getFullName() + "')");");
+		myStmt.executeUpdate("");
 		
 		//insert those dates given the combination of authoer and book title
 		

@@ -56,21 +56,22 @@ public class MemberRepository {
 			e1.printStackTrace();
 		}
 		try {
-			myStmt.executeQuery("INSERT INTO member(full_name,email,type,password) VALUES(" + member.getFullName() + ","
-					+ member.getEmail() + "," + member.isAdmin() + "," + member.getFullName() + ");");
+			myStmt.executeUpdate("INSERT INTO member(full_name,email,type,password) VALUES('" + member.getFullName() + "','"
+					+ member.getEmail() + "','" + member + "','" + member.getPassword() + "');");
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			return false;
 		}
-		// TODO query to insert the new member in the db
 
 	}
 
-	public ArrayList<Book> getBorrowedBooks(int id) throws SQLException, ParseException {
+	public ArrayList<Book> getBorrowedBooks(String email) throws SQLException, ParseException {
 		// TODO query to retrive all the member books
 		Statement myStmt = myConn.createStatement();
-		ResultSet stringQuery = myStmt.executeQuery("");
+		ResultSet stringQuery = myStmt.executeQuery(
+				"select m.email,b.book_name,b.description,b.category,b.author,b.book_issue_date,b.entry_date,b.version,b.borrow_period,b.copies from book b,borrow r, member m where m.email='"
+						+ email + "' and m.member_id= r.member_id and r.book_id=b.book_id);");
 		ArrayList<Book> result = new ArrayList<>();
 
 		while (stringQuery.next()) {
@@ -100,7 +101,7 @@ public class MemberRepository {
 	public boolean isMemberExists(String email) throws SQLException {
 		// TODO query to see whether the member is in our db or not
 		Statement myStmt = myConn.createStatement();
-		ResultSet stringQuery = myStmt.executeQuery("SELECT * FROM member where email = '" + email + "'");
+		ResultSet stringQuery = myStmt.executeQuery("SELECT Email FROM member WHERE email='" + email + "';");
 		if (stringQuery == null || stringQuery.equals("")) {
 			return false;
 		}
@@ -112,7 +113,8 @@ public class MemberRepository {
 		if (!isMemberExists(email))
 			return null;
 		Statement myStmt = myConn.createStatement();
-		ResultSet stringQueryPassword = myStmt.executeQuery("SELECT * FROM member where email = '" + email + "'");
+		ResultSet stringQueryPassword = myStmt
+				.executeQuery("select email,password from member where email=+'" + email + "');");
 		while (stringQueryPassword.next()) {
 			String resultingPassword = stringQueryPassword.getString("password");
 
