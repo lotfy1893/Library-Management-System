@@ -126,6 +126,32 @@ public class MemberRepository {
 		}
 		return null;
 	}
+	
+	/**
+	 * this method returns all members in db
+	 * @return
+	 * @throws SQLException
+	 */
+	public ArrayList<Member> getAllMembers() throws SQLException{
+		Statement myStmt = myConn.createStatement();
+		ResultSet stringQuery = myStmt.executeQuery("SELECT * FROM member");
+		// TODO query to retrieve member all info by id
+		ArrayList<Member> allMembers = new ArrayList<>();
+		Member loggedInMember = null;
+		while (stringQuery.next()) {
+				String queryResultID = stringQuery.getString("member_id");
+				String queryResultFullName = stringQuery.getString("full_name");
+				String queryResultEmail = stringQuery.getString("email");
+				String queryResultType = stringQuery.getString("type");
+				String queryResultPassword = stringQuery.getString("password");
+
+				loggedInMember = new Member(queryResultEmail, queryResultPassword, queryResultFullName);
+				loggedInMember.setId(Integer.parseInt(queryResultID));
+				loggedInMember.setAdmin(queryResultType.equalsIgnoreCase("member") ? false : true);
+				allMembers.add(loggedInMember);
+		}
+		return allMembers;
+	}
 
 	public boolean exceededReturnDue(int id) {
 		// TODO query to check that the user doesn't have a book that excedds
