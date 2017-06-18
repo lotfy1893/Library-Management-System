@@ -60,19 +60,19 @@ public class BooksGUI extends JPanel {
 
 		// ---------- related to the book view page
 		String[][] mybooks = { { "Math_book", "peter" }, { "Science_book", "lotfy" }, { "statistics_book", "bassem" } };
-		
-//		ArrayList<Book> myBooks = memberRepository.getBorrowedBooks(this.loggedInMember.getEmail());
-//		String[][] mybooksTest = new String[myBooks.size()][4];
-//		for (int i = 0; i < myBooks.size(); i++) {
-//			int bookId = myBooks.get(i).getId();
-//			int memberId = this.loggedInMember.getId();
-//			Date returnDate = bookRepository.getBookReturnDate(memberId, bookId);
-//			mybooksTest[i][0] = myBooks.get(i).getName();
-//			mybooksTest[i][1] = myBooks.get(i).getAuthor();
-//			mybooksTest[i][2] = myBooks.get(i).getCategory();
-//			mybooksTest[i][3] = returnDate + "";
-//		}
-		DefaultTableModel userTableModel_Mybooks = new DefaultTableModel(mybooks,
+
+		ArrayList<Book> myBooks = memberRepository.getBorrowedBooks(this.loggedInMember.getEmail());
+		String[][] mybooksTest = new String[myBooks.size()][4];
+		for (int i = 0; i < myBooks.size(); i++) {
+			int bookId = myBooks.get(i).getId();
+			int memberId = this.loggedInMember.getId();
+			Date returnDate = bookRepository.getBookReturnDate(memberId, bookId);
+			mybooksTest[i][0] = myBooks.get(i).getName();
+			mybooksTest[i][1] = myBooks.get(i).getAuthor();
+			mybooksTest[i][2] = myBooks.get(i).getCategory();
+			mybooksTest[i][3] = returnDate + "";
+		}
+		DefaultTableModel userTableModel_Mybooks = new DefaultTableModel(mybooksTest,
 				new String[] { "Book Name", "Author Name", "Category", "Return Date" }) {
 			@Override
 			public boolean isCellEditable(int row, int column) {
@@ -85,14 +85,43 @@ public class BooksGUI extends JPanel {
 		JButton btnBorrowBook = new JButton("Borrow Book");
 		btnBorrowBook.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				int row = 0;
+				if ((row = table_LibraryBooks.getSelectedRow()) != -1) {
+					// remove selected row from the model
+					try {
+						final String title = (String) table_LibraryBooks.getValueAt(row, 0);
+						final String author = (String) table_LibraryBooks.getValueAt(row, 1);
+						Book b = bookRepository.getBookByAuthorAndName(title, author);
+						bookRepository.borrowBook(loggedInMember, b);
 
-				// TODO when the user press the Borrow Button
-				// make the unavailable in library book table in case no other
-				// copies in the Library
-				// as well as to the GUI
-				// add the book to the user's book list or table
-				// as well as to the GUI
+						ArrayList<Book> allBooks = bookRepository.getAllBooksInLibrary();
+						String[][] allBooksArrayForTable = new String[allBooks.size()][6];
+						for (int i = 0; i < allBooks.size(); i++) {
+							String avaliablity = allBooks.get(i).getNumberOfCopies() > 0 ? "A" : "N";
+							allBooksArrayForTable[i][0] = allBooks.get(i).getName();
+							allBooksArrayForTable[i][1] = allBooks.get(i).getAuthor();
+							allBooksArrayForTable[i][2] = avaliablity;
+							allBooksArrayForTable[i][3] = allBooks.get(i).getCategory();
+							allBooksArrayForTable[i][4] = allBooks.get(i).getBookIssueDate() + "";
+							allBooksArrayForTable[i][5] = allBooks.get(i).getNumberOfCopies() + "";
+						}
 
+						DefaultTableModel userTableModel = new DefaultTableModel(allBooksArrayForTable,
+								new String[] { "Book name", "Author name", "Availability", "Category", "Issue Date",
+										"No. of Copies" }) {
+							@Override
+							public boolean isCellEditable(int row, int column) {
+								return false;
+							}
+						};
+
+						table_LibraryBooks.setModel(userTableModel);
+
+					} catch (Exception ex) {
+						ex.printStackTrace();
+						System.out.println("Cannot perform this remove!");
+					}
+				}
 			}
 		});
 		btnBorrowBook.setBounds(812, 242, 117, 35);
@@ -180,17 +209,15 @@ public class BooksGUI extends JPanel {
 			public void valueChanged(ListSelectionEvent event) {
 
 				// checks if the books is available or not
-
-				if (table_LibraryBooks.getValueAt(table_LibraryBooks.getSelectedRow(), 2).equals("A")) { // 2
-																											// means
-																											// third
-																											// column
-					btnBorrowBook.setEnabled(true);
-				} else {
-					btnBorrowBook.setEnabled(false);
+				if (table_LibraryBooks.getSelectedRow() != -1) {
+					if (table_LibraryBooks.getValueAt(table_LibraryBooks.getSelectedRow(), 2).equals("A")) { // 2
+						btnBorrowBook.setEnabled(true);
+					} else {
+						btnBorrowBook.setEnabled(false);
+					}
+					// System.out.println(table.getValueAt(table.getSelectedRow(),
+					// 2));
 				}
-				// System.out.println(table.getValueAt(table.getSelectedRow(),
-				// 2));
 			}
 		});
 		scrollPane_LibraryBooks.setRowHeaderView(table_LibraryBooks);

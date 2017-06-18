@@ -25,22 +25,22 @@ public class BookRepository {
 		ResultSet stringQuery = myStmt.executeQuery(
 				"select * from book where book_name Like '%" + name + "%' And author Like '%" + author + "%';");
 
-		while(stringQuery.next()) {
+		while (stringQuery.next()) {
 			String desc = stringQuery.getString("description");
 			String category = stringQuery.getString("category");
 			String bookIssue = stringQuery.getString("book_issue_date");
-			String entryDate = stringQuery.getString("entry_date");
+			// String entryDate = stringQuery.getString("entry_date");
 			String version = stringQuery.getString("version");
 			String borrowPeriod = stringQuery.getString("borrow_period");
 			String copies = stringQuery.getString("copies");
 
-			Date issue = (Date) new SimpleDateFormat("yyyy/dd/MM").parse(bookIssue);
-			//Timestamp tsEntry = Timestamp.valueOf(entryDate);
+			Date issue = new Date(new SimpleDateFormat("yyyy-MM-dd").parse(bookIssue).getTime());
+			// Timestamp tsEntry = Timestamp.valueOf(entryDate);
 			int vers = Integer.parseInt(version);
 			int borrow = Integer.parseInt(borrowPeriod);
 
 			Book book = new Book(name, desc, category, author, issue, vers, borrow, Integer.parseInt(copies));
-			book.setId(Integer.parseInt(stringQuery.getString("book_name")));
+			book.setId(Integer.parseInt(stringQuery.getString("book_id")));
 
 			return book;
 		}
@@ -94,61 +94,32 @@ public class BookRepository {
 
 	}
 
-	@SuppressWarnings("deprecation")
-	public Date calculateReturnDate(Book book, Date borrowDate) throws SQLException {
-		Statement myStmt = myConn.createStatement();
-		ResultSet stringQuery = myStmt.executeQuery("select return_date from borrow");
-		// query to get the period borrow of the book
-		if (stringQuery != null) {
-			int numberofDays = Integer.parseInt(stringQuery + "");
-			Date copy = borrowDate;
-			copy.setDate(copy.getDate() + numberofDays);
-			return copy;
-		}
-		return null;
-	}
-
-	// insert boorrow date
-	// insert return date
-	public void inserBorrowAndReturnDateForABorrowedBook(Date borrow, Date returnDate, Book borrowBook)
-			throws SQLException {
-		Statement myStmt = myConn.createStatement();
-		// myStmt.executeUpdate("INSERT INTO
-		// member(full_name,email,type,password) VALUES('" +
-		// member.getFullName() + "','"
-		// + member.getEmail() + "','" + member.isAdmin() + "','" +
-		// member.getFullName() + "')");
-		myStmt.executeUpdate("");
-
-		// insert those dates given the combination of authoer and book title
-
-	}
-
 	// increment copies
 	public void incrementCopiesOfBook(Book book) throws SQLException {
-		int newCopuies = book.getNumberOfCopies() + 1;
 		Statement myStmt = myConn.createStatement();
-		myStmt.executeQuery("");
+		myStmt.executeUpdate("UPDATE book SET copies = copies + 1 where book_id=" + book.getId());
 	}
 
 	// decrement copies
 	public void decrementCopiesOfBook(Book book) throws SQLException {
-		int newCopuies = book.getNumberOfCopies() - 1;
 		Statement myStmt = myConn.createStatement();
-		myStmt.executeQuery("");
+		myStmt.executeUpdate("UPDATE book SET copies = copies - 1 where book_id=" + book.getId());
 	}
 
-	public boolean borrowBook(Member borrower, Book borrowedBook) {
+	public boolean borrowBook(Member borrower, Book borrowedBook) throws SQLException, ParseException {
+		int copies = getBookByAuthorAndName(borrowedBook.getName(), borrowedBook.getAuthor()).getNumberOfCopies();
+		if (copies <= 0)
+			return false;
 		try {
+			int borrowPeriod = borrowedBook.getBorrowPeriod();
 			Statement myStmt = myConn.createStatement();
-			myStmt.executeUpdate("");
-			// insert into borrow date the date of today ONLY DATE NOT
-			// TIME!!!!!!!!!
-			// query to insert a borrowed book for this member
-			// status of borrow entry is active nowN
-			this.decrementCopiesOfBook(borrowedBook);
+			myStmt.executeUpdate(
+					"INSERT INTO `borrow` (return_date,borrow_date,member_id,book_id,status) VALUES (CURDATE()+"
+							+ borrowPeriod + ",CURDATE()," + borrower.getId() + "," + borrowedBook.getId() + ",'A')");
+			decrementCopiesOfBook(borrowedBook);
 			return true;
 		} catch (SQLException ex) {
+			ex.printStackTrace();
 			return false;
 		}
 	}
@@ -166,39 +137,64 @@ public class BookRepository {
 		}
 	}
 
-	public ArrayList<Book> getAllBooksInLibrary() throws SQLException, ParseException{
+	public ArrayList<Book> getAllBooksInLibrary() throws SQLException, ParseException {
 		Statement myStmt = myConn.createStatement();
 		ResultSet stringQuery = myStmt.executeQuery("SELECT * from book");
 		ArrayList<Book> results = new ArrayList<>();
-		
-		while(stringQuery.next()){
-		String name = stringQuery.getString("book_name");	
-		String author = stringQuery.getString("author");
-		String desc = stringQuery.getString("description");
-		String category = stringQuery.getString("category");
-		String bookIssue = stringQuery.getString("book_issue_date");
-		String entryDate = stringQuery.getString("entry_date");
-		String version = stringQuery.getString("version");
-		String borrowPeriod = stringQuery.getString("borrow_period");
-		String copies = stringQuery.getString("copies");
 
-		Date issue = new Date(new SimpleDateFormat("yyyy-MM-dd").parse(bookIssue).getTime());
-//		Timestamp tsEntry = Timestamp.valueOf(entryDate);
-		int vers = Integer.parseInt(version);
-		int borrow = Integer.parseInt(borrowPeriod);
+		while (stringQuery.next()) {
+			String name = stringQuery.getString("book_name");
+			String author = stringQuery.getString("author");
+			String desc = stringQuery.getString("description");
+			String category = stringQuery.getString("category");
+			String bookIssue = stringQuery.getString("book_issue_date");
+			// String entryDate = stringQuery.getString("entry_date");
+			String version = stringQuery.getString("version");
+			String borrowPeriod = stringQuery.getString("borrow_period");
+			String copies = stringQuery.getString("copies");
 
-		Book book = new Book(name, desc, category, author, issue,vers, borrow, Integer.parseInt(copies));
-		book.setId(Integer.parseInt(stringQuery.getString("book_id")));
-		results.add(book);
+			Date issue = new Date(new SimpleDateFormat("yyyy-MM-dd").parse(bookIssue).getTime());
+			// Timestamp tsEntry = Timestamp.valueOf(entryDate);
+			int vers = Integer.parseInt(version);
+			int borrow = Integer.parseInt(borrowPeriod);
+
+			Book book = new Book(name, desc, category, author, issue, vers, borrow, Integer.parseInt(copies));
+			book.setId(Integer.parseInt(stringQuery.getString("book_id")));
+			results.add(book);
 		}
 		return results;
 	}
-	
-	public Date getBookReturnDate(int memberId, int bookId) throws SQLException {
+
+	@SuppressWarnings("deprecation")
+	public Date getBookReturnDate(int memberId, int bookId) throws SQLException, ParseException {
 		Statement myStmt = myConn.createStatement();
-		myStmt.executeUpdate("");
-		// query to the borrow table to get the return date given member id and
-		// book id to get a unique borrow entry and status is active
-		return null;
+		ResultSet queryString = myStmt.executeQuery("select * from borrow where status = 'A' and member_id='" + memberId
+				+ "' and book_id='" + bookId + "'");
+		Date borrow = null;
+		while (queryString.next()) {
+			String borrowDate = queryString.getString("return_date");
+
+			borrow = new Date(new SimpleDateFormat("yyyy-MM-dd").parse(borrowDate).getTime());
+			borrow.setDate(borrow.getDate() + 1);
+		}
+		return borrow;
+	}
+
+	public void removeBorrowedBookTransaction(int memberId, int bookId) throws SQLException {
+		Statement myStmt = myConn.createStatement();
+		myStmt.executeUpdate(
+				"delete from borrow where member_id='" + memberId + "' and book_id='" + bookId + "' and status='A'");
+	}
+
+	public boolean removeBookFromDB(String title, String author) {
+		Statement myStmt;
+		try {
+			myStmt = myConn.createStatement();
+			myStmt.executeUpdate("DELETE FROM book WHERE book_name = '" + title + "' AND author = '" + author + "'");
+			return true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 }

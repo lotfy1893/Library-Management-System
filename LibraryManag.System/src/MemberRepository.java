@@ -42,8 +42,8 @@ public class MemberRepository {
 		}
 		return loggedInMember;
 	}
-	
-	public int getIdMemberByEmail(String email) throws SQLException{
+
+	public int getIdMemberByEmail(String email) throws SQLException {
 		Member m = getMemberByEmail(email);
 		return m.getId();
 	}
@@ -51,7 +51,6 @@ public class MemberRepository {
 	public boolean registerNewMember(Member member) throws SQLException {
 
 		if (isMemberExists(member.getEmail())) {
-			System.out.println("i am here");
 			return false;
 		}
 
@@ -68,7 +67,6 @@ public class MemberRepository {
 			return true;
 		} catch (SQLException e) {
 			e.printStackTrace();
-			System.out.println("exception catched from the ssql");
 			return false;
 		}
 	}
@@ -77,8 +75,16 @@ public class MemberRepository {
 		// TODO query to retrive all the member books
 		Statement myStmt = myConn.createStatement();
 		ResultSet stringQuery = myStmt.executeQuery(
-				"select m.email,b.book_name,b.description,b.category,b.author,b.book_issue_date,b.entry_date,b.version,b.borrow_period,b.copies from book b,borrow r, member m where m.email='"
-						+ email + "' and m.member_id= r.member_id and r.book_id=b.book_id);"); // add where also the status is Active 
+				"select b.book_id,m.email,b.book_name,b.description,b.category,b.author,b.book_issue_date,b.entry_date,b.version,b.borrow_period,b.copies from book b,borrow r, member m where m.email='"
+						+ email + "'and m.member_id= r.member_id and r.book_id=b.book_id and r.status='A'");
+
+		// where
+		// also
+		// the
+		// status
+		// is
+		// Active
+		// //TODO
 		ArrayList<Book> result = new ArrayList<>();
 
 		while (stringQuery.next()) {
@@ -87,18 +93,18 @@ public class MemberRepository {
 			String category = stringQuery.getString("category");
 			String author = stringQuery.getString("author");
 			String bookIssue = stringQuery.getString("book_issue_date");
-			String entryDate = stringQuery.getString("entry_date");
+		//	String entryDate = stringQuery.getString("entry_date");
 			String version = stringQuery.getString("version");
 			String borrowPeriod = stringQuery.getString("borrow_period");
 			String copies = stringQuery.getString("copies");
 
-			Date issue = (Date) new SimpleDateFormat("yyyy/dd/MM").parse(bookIssue);
-		//	Timestamp tsEntry = Timestamp.valueOf(entryDate);
+			Date issue = new Date(new SimpleDateFormat("yyyy-MM-dd").parse(bookIssue).getTime());
+			// Timestamp tsEntry = Timestamp.valueOf(entryDate);
 			int vers = Integer.parseInt(version);
 			int borrow = Integer.parseInt(borrowPeriod);
 
 			Book book = new Book(name, desc, category, author, issue, vers, borrow, Integer.parseInt(copies));
-			book.setId(Integer.parseInt(stringQuery.getString("book_name")));
+			book.setId(Integer.parseInt(stringQuery.getString("book_id")));
 			result.add(book);
 		}
 
@@ -124,7 +130,6 @@ public class MemberRepository {
 				.executeQuery("select email,password from member where email=+'" + email + "'");
 		while (stringQueryPassword.next()) {
 			String resultingPassword = stringQueryPassword.getString("password");
-
 			if (password.equals(resultingPassword)) {
 				Member result = getMemberByEmail(email);
 				return result;
@@ -167,5 +172,27 @@ public class MemberRepository {
 		// due
 		// ResultSet myRs = myStmt.executeQuery("");
 		return true;
+	}
+
+	/**
+	 * this method is used to remove a certain member from the db for the Admin
+	 * and also we use it in the test class for cleanup
+	 * 
+	 * @param email
+	 * @throws SQLException
+	 *             return true/false
+	 */
+	public boolean removeUserFromDB(String email) {
+		Statement myStmt;
+		try {
+			myStmt = myConn.createStatement();
+			myStmt.executeUpdate("DELETE FROM member WHERE email = '" + email + "'");
+			return true;
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+
 	}
 }
