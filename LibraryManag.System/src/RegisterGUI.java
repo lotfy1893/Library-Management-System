@@ -18,7 +18,7 @@ import javax.swing.JTextField;
  */
 
 /**
- * @author Peter
+ * @author Peter Bessada
  *
  */
 @SuppressWarnings("serial")
@@ -47,11 +47,13 @@ public class RegisterGUI extends JPanel {
 		passwordField.setBounds(263, 327, 465, 29);
 		add(passwordField);
 
+		// Email input
 		textField_Email = new JTextField();
 		textField_Email.setColumns(10);
 		textField_Email.setBounds(263, 287, 465, 29);
 		add(textField_Email);
 
+		// input for the user full name
 		textField_FullName = new JTextField();
 		textField_FullName.setColumns(10);
 		textField_FullName.setBounds(263, 247, 465, 29);
@@ -78,13 +80,12 @@ public class RegisterGUI extends JPanel {
 
 				try {
 					try {
+						// call this method to register
 						inputListenerForRegisterButton();
 					} catch (ParseException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
 
@@ -125,10 +126,7 @@ public class RegisterGUI extends JPanel {
 	@SuppressWarnings("deprecation")
 	public void inputListenerForRegisterButton() throws SQLException, ParseException {
 
-		String email = textField_Email.getText().toLowerCase(); // put the input
-		// email String
-		// to a lower
-		// case
+		String email = textField_Email.getText().toLowerCase();
 		textField_Email.setText("");
 
 		String fullName = textField_FullName.getText(); // Full name
@@ -144,24 +142,20 @@ public class RegisterGUI extends JPanel {
 			revalidate();
 			repaint();
 		} else {
-
-			// add the new member to the database
-			// takes place in member class)
-			// TODO code to switch to the BooksGUI Panel
 			boolean addedToDB = memberRepository.registerNewMember(newAddedMember);
 			if (!addedToDB) {
 				lblEmailExists.setVisible(true);
 				return;
 			}
+			// if the user already exists then switch to the BooksGUI Panel
 			BooksGUI p = new BooksGUI(newAddedMember);
 			this.removeAll();
 			add(p);
 			revalidate();
 			repaint();
 		}
-
 	}
-
+	// to check if the email format is correct or not
 	public static boolean isEmailFormatCorrect(String email) {
 		Pattern p = Pattern.compile("\\b[a-z0-9._%-]+@[a-z0-9.-]+\\.[a-z]{2,4}\\b");
 		Matcher m = p.matcher(email);

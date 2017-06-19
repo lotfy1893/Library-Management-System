@@ -1,4 +1,5 @@
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -8,31 +9,20 @@ import java.sql.SQLException;
 import java.text.ParseException;
 import java.util.ArrayList;
 
-import javax.swing.SwingUtilities;
-import javax.swing.DefaultListModel;
 import javax.swing.JButton;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.JLabel;
-import javax.swing.JList;
-import javax.swing.JScrollBar;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.AbstractListModel;
-import java.awt.BorderLayout;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
-import java.awt.ScrollPane;
-import java.awt.Window;
-
-import javax.swing.event.ListSelectionListener;
+import javax.swing.UIManager;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
-import javax.swing.JTabbedPane;
-import java.awt.Font;
-import javax.swing.JTable;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.UIManager;
 
 /**
  * 
@@ -42,8 +32,13 @@ import javax.swing.UIManager;
  * @author Peter
  *
  */
+
 public class AdminGUI extends JPanel {
-	private JTextField txtFindABook;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private JTextField textField_SearchByCategory;
 	private JTable table_LibraryBooks;
 	private JTable table_ViewUser;
 	private JScrollPane scrollPane_LibraryBooks;
@@ -52,6 +47,8 @@ public class AdminGUI extends JPanel {
 	private BookRepository bookRepository;
 	private MemberRepository memberRepository;
 	private String clickedEmail = "";
+	private JTextField textField_SearchByAuthor;
+	private JTextField textField_SearchByBook;
 
 	/**
 	 * Create the panel.
@@ -72,10 +69,6 @@ public class AdminGUI extends JPanel {
 
 		// ----------------------- related to the LibraryBook tab
 
-		// String[][] books = { { "Math_book", "peter", "A" }, { "Science_book",
-		// "lotfy", "N" },
-		// { "statistics_book", "bassem", "A" } };
-
 		ArrayList<Book> allBooks = bookRepository.getAllBooksInLibrary();
 		String[][] allBooksArrayForTable = new String[allBooks.size()][6];
 		for (int i = 0; i < allBooks.size(); i++) {
@@ -88,6 +81,7 @@ public class AdminGUI extends JPanel {
 			allBooksArrayForTable[i][5] = allBooks.get(i).getNumberOfCopies() + "";
 		}
 
+		@SuppressWarnings("serial")
 		DefaultTableModel userTableModel = new DefaultTableModel(allBooksArrayForTable, new String[] { "Book name",
 				"Author name", "Availability", "Category", "Issue Date", "No. of Copies" }) {
 			@Override
@@ -99,10 +93,6 @@ public class AdminGUI extends JPanel {
 		// -----------------------
 
 		// ----------------------- related to the viewUser tab
-
-		// String[][] myUsers = { { "peter", "peter@jku.com" }, { "Lotfy",
-		// "Lotfy@jku.com" },
-		// { "Bassem", "Bassem@jku.com" } };
 
 		ArrayList<Member> allUsers = memberRepository.getAllMembers();
 		String[][] allUsersForTable = new String[allUsers.size()][2];
@@ -117,6 +107,7 @@ public class AdminGUI extends JPanel {
 			allUsersForTable[i][1] = allUsers.get(i).getEmail();
 		}
 
+		@SuppressWarnings("serial")
 		DefaultTableModel userTableModel_MyUsers = new DefaultTableModel(allUsersForTable,
 				new String[] { "User Full Name", "email Address" }) {
 			@Override
@@ -132,20 +123,44 @@ public class AdminGUI extends JPanel {
 		// Remove Book Listener
 		btnRemoveBook.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-
-				// TODO when the user press the Remove Book Button
-				// Remove the book from the Book database table
-				// Return the no. of selected row
-
 				int row = 0;
 				if ((row = table_LibraryBooks.getSelectedRow()) != -1) {
-					// remove selected row from the model
 					try {
 						final String title = (String) table_LibraryBooks.getValueAt(row, 0);
 						final String author = (String) table_LibraryBooks.getValueAt(row, 1);
 						bookRepository.removeBookFromDB(title, author);
-						userTableModel.removeRow(table_LibraryBooks.getSelectedRow());
-						
+						// userTableModel.removeRow(table_LibraryBooks.getSelectedRow());
+
+						ArrayList<Book> allBooks = null;
+						try {
+							allBooks = bookRepository.getAllBooksInLibrary();
+						} catch (SQLException e1) {
+							e1.printStackTrace();
+						} catch (ParseException e1) {
+							e1.printStackTrace();
+						}
+						String[][] allBooksArrayForTable = new String[allBooks.size()][6];
+						for (int i = 0; i < allBooks.size(); i++) {
+							String avaliablity = allBooks.get(i).getNumberOfCopies() > 0 ? "A" : "N";
+							allBooksArrayForTable[i][0] = allBooks.get(i).getName();
+							allBooksArrayForTable[i][1] = allBooks.get(i).getAuthor();
+							allBooksArrayForTable[i][2] = avaliablity;
+							allBooksArrayForTable[i][3] = allBooks.get(i).getCategory();
+							allBooksArrayForTable[i][4] = allBooks.get(i).getBookIssueDate() + "";
+							allBooksArrayForTable[i][5] = allBooks.get(i).getNumberOfCopies() + "";
+						}
+
+						@SuppressWarnings("serial")
+						DefaultTableModel userTableModel = new DefaultTableModel(allBooksArrayForTable,
+								new String[] { "Book name", "Author name", "Availability", "Category", "Issue Date",
+										"No. of Copies" }) {
+							@Override
+							public boolean isCellEditable(int row, int column) {
+								return false;
+							}
+						};
+						table_LibraryBooks.setModel(userTableModel);
+
 					} catch (Exception ex) {
 						ex.printStackTrace();
 						System.out.println("Cannot perform this remove!");
@@ -184,7 +199,7 @@ public class AdminGUI extends JPanel {
 					try {
 						memberRepository.removeUserFromDB(clickedEmail);
 						userTableModel_MyUsers.removeRow(table_ViewUser.getSelectedRow());
-						System.out.println(row);
+						// System.out.println(row);
 						final String value = (String) table_ViewUser.getValueAt(row, 1);
 						clickedEmail = value;
 					} catch (Exception ex) {
@@ -288,6 +303,7 @@ public class AdminGUI extends JPanel {
 							mybooksTest[i][2] = myBooks.get(i).getCategory();
 							mybooksTest[i][3] = returnDate + "";
 						}
+						@SuppressWarnings("serial")
 						DefaultTableModel userTableModel_UserBooks = new DefaultTableModel(mybooksTest,
 								new String[] { "Book Name", "Author Name", "Category", "Return Date" }) {
 							@Override
@@ -336,6 +352,7 @@ public class AdminGUI extends JPanel {
 
 		String[][] mybooksTest = new String[4][4];
 
+		@SuppressWarnings("serial")
 		DefaultTableModel userTableModel_UserBooks = new DefaultTableModel(mybooksTest,
 				new String[] { "Book Name", "Author Name", "Category", "Return Date" }) {
 			@Override
@@ -359,51 +376,141 @@ public class AdminGUI extends JPanel {
 					btnRemoveUser.setEnabled(false);
 					lblUsersBookList.setVisible(false);
 					scrollPane_UserBooks.setVisible(false);
+					table_ViewUser.clearSelection();
 
+					ArrayList<Book> allBooks = null;
+					try {
+						allBooks = bookRepository.getAllBooksInLibrary();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (ParseException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					String[][] allBooksArrayForTable = new String[allBooks.size()][6];
+					for (int i = 0; i < allBooks.size(); i++) {
+						String avaliablity = allBooks.get(i).getNumberOfCopies() > 0 ? "A" : "N";
+						allBooksArrayForTable[i][0] = allBooks.get(i).getName();
+						allBooksArrayForTable[i][1] = allBooks.get(i).getAuthor();
+						allBooksArrayForTable[i][2] = avaliablity;
+						allBooksArrayForTable[i][3] = allBooks.get(i).getCategory();
+						allBooksArrayForTable[i][4] = allBooks.get(i).getBookIssueDate() + "";
+						allBooksArrayForTable[i][5] = allBooks.get(i).getNumberOfCopies() + "";
+					}
+
+					@SuppressWarnings("serial")
+					DefaultTableModel userTableModel = new DefaultTableModel(allBooksArrayForTable, new String[] {
+							"Book name", "Author name", "Availability", "Category", "Issue Date", "No. of Copies" }) {
+						@Override
+						public boolean isCellEditable(int row, int column) {
+							return false;
+						}
+					};
+					table_LibraryBooks.setModel(userTableModel);
 				}
 				if (tabbedPane.getSelectedIndex() == 1) {
 					btnRemoveBook.setEnabled(false);
 					lblUsersBookList.setVisible(true);
 					scrollPane_UserBooks.setVisible(true);
+					table_LibraryBooks.clearSelection();
 				}
 			}
 		});
 
-		txtFindABook = new JTextField();
-		txtFindABook.setText("Find a book...");
-		txtFindABook.setToolTipText("");
-		txtFindABook.setBounds(64, 120, 513, 20);
-		add(txtFindABook);
-		txtFindABook.setColumns(10);
+		textField_SearchByAuthor = new JTextField();
+		textField_SearchByAuthor.setToolTipText("");
+		textField_SearchByAuthor.setColumns(10);
+		textField_SearchByAuthor.setBounds(205, 94, 446, 20);
+		add(textField_SearchByAuthor);
 
-		JButton btn_Search = new JButton("Search");
-		btn_Search.addActionListener(new ActionListener() {
+		textField_SearchByBook = new JTextField();
+		textField_SearchByBook.setToolTipText("");
+		textField_SearchByBook.setColumns(10);
+		textField_SearchByBook.setBounds(205, 63, 446, 20);
+		add(textField_SearchByBook);
+
+		textField_SearchByCategory = new JTextField();
+		textField_SearchByCategory.setToolTipText("");
+		textField_SearchByCategory.setBounds(205, 125, 446, 20);
+		add(textField_SearchByCategory);
+		textField_SearchByCategory.setColumns(10);
+
+		JButton btn_SearchAll = new JButton("Search All");
+		btn_SearchAll.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
-				String searchInput = txtFindABook.getText();
-				txtFindABook.setText("");
+				String bookName = textField_SearchByBook.getText();
+				textField_SearchByBook.setText("");
 
-				// TODO when the user press the search Button
-				// Return all the Library books here
-				// view the data in the Library Books view
+				String AuthorName = textField_SearchByAuthor.getText();
+				textField_SearchByAuthor.setText("");
+
+				String category = textField_SearchByCategory.getText();
+				textField_SearchByCategory.setText("");
+				try {
+					ArrayList<Book> searchResults = bookRepository.searchForABook(bookName, AuthorName, category);
+					String[][] allBooksArrayForTableA = new String[searchResults.size()][6];
+					for (int i = 0; i < searchResults.size(); i++) {
+						String avaliablity = searchResults.get(i).getNumberOfCopies() > 0 ? "A" : "N";
+						allBooksArrayForTableA[i][0] = searchResults.get(i).getName();
+						allBooksArrayForTableA[i][1] = searchResults.get(i).getAuthor();
+						allBooksArrayForTableA[i][2] = avaliablity;
+						allBooksArrayForTableA[i][3] = searchResults.get(i).getCategory();
+						allBooksArrayForTableA[i][4] = searchResults.get(i).getBookIssueDate() + "";
+						allBooksArrayForTableA[i][5] = searchResults.get(i).getNumberOfCopies() + "";
+					}
+
+					@SuppressWarnings("serial")
+					DefaultTableModel userTableModel = new DefaultTableModel(allBooksArrayForTableA, new String[] {
+							"Book name", "Author name", "Availability", "Category", "Issue Date", "No. of Copies" }) {
+						@Override
+						public boolean isCellEditable(int row, int column) {
+							return false;
+						}
+					};
+					table_LibraryBooks.setModel(userTableModel);
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				} catch (ParseException e1) {
+					e1.printStackTrace();
+				}
 
 			}
 		});
-		btn_Search.setBounds(614, 119, 89, 23);
-		add(btn_Search);
+		btn_SearchAll.setBounds(677, 124, 125, 23);
+		add(btn_SearchAll);
 
 		String x = "Admin Panel"; // I will get the Full name of the user here
 		JLabel lblNewLabel_UserName = new JLabel(x);
 		lblNewLabel_UserName.setForeground(Color.GREEN);
 		lblNewLabel_UserName.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 25));
-		lblNewLabel_UserName.setBounds(64, 54, 356, 44);
+		lblNewLabel_UserName.setBounds(64, 11, 356, 44);
 		add(lblNewLabel_UserName);
 
 		JLabel lblLogOut = new JLabel("Log Out");
 		lblLogOut.setForeground(new Color(0, 255, 51));
 		lblLogOut.setFont(new Font("Tahoma", Font.BOLD, 15));
-		lblLogOut.setBounds(853, 74, 63, 24);
+		lblLogOut.setBounds(851, 25, 63, 24);
 		add(lblLogOut);
+
+		JLabel lbl_SearchbyCategory = new JLabel("Search by Category");
+		lbl_SearchbyCategory.setForeground(new Color(0, 255, 0));
+		lbl_SearchbyCategory.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lbl_SearchbyCategory.setBounds(64, 128, 139, 14);
+		add(lbl_SearchbyCategory);
+
+		JLabel lblSearchByAuther = new JLabel("Search by Author ");
+		lblSearchByAuther.setForeground(Color.GREEN);
+		lblSearchByAuther.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblSearchByAuther.setBounds(64, 97, 139, 14);
+		add(lblSearchByAuther);
+
+		JLabel lblSearchByBook = new JLabel("Search by Book");
+		lblSearchByBook.setForeground(Color.GREEN);
+		lblSearchByBook.setFont(new Font("Tahoma", Font.BOLD, 12));
+		lblSearchByBook.setBounds(64, 66, 139, 14);
+		add(lblSearchByBook);
 
 		lblLogOut.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {

@@ -57,16 +57,10 @@ public class MemberRepositoryTest {
 		assertEquals(m.getEmail(), "test@test.com");
 		assertEquals(m.getFullName(), "Peter Bessada");
 	}
-	
-//	@Test
-//	public void testRemovingMemberFromDb(){
-//		boolean removed =  memberRepository.removeUserFromDB("test@test.com");
-//		assertTrue(removed);
-//	}
-	
+
 	@After
-	public void cleanUpDB(){
+	public void cleanUpDB() {
 		memberRepository.removeUserFromDB("test@test.com");
 	}
-	
+
 }

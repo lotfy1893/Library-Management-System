@@ -35,7 +35,7 @@ public class LibraryGUI extends JFrame {
 	private MemberRepository memberRepository;
 
 	/**
-	 * Launch the application.
+	 * Launch the application. This is the main page to start the application
 	 */
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -66,6 +66,7 @@ public class LibraryGUI extends JFrame {
 	 * @wbp.parser.entryPoint
 	 */
 	private void initialize() {
+		// this is my main frame that will carry all panels in the future
 		frmLibraryManagementSystem = new JFrame();
 		frmLibraryManagementSystem.setTitle("Library Management System");
 		frmLibraryManagementSystem.setResizable(false);
@@ -77,6 +78,7 @@ public class LibraryGUI extends JFrame {
 		panel11.setLayout(null);
 		panel11.add(panel);
 
+		// To define title to my page
 		JLabel lblLabel_Title = new JLabel("Library Management System");
 		lblLabel_Title.setForeground(new Color(51, 204, 0));
 		lblLabel_Title.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 34));
@@ -130,42 +132,46 @@ public class LibraryGUI extends JFrame {
 					try {
 						inputListenerForLoginButton();
 					} catch (ParseException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
 					e1.printStackTrace();
-				}// call
-												// inputListenerForLoginButton
-												// method when "Login" button is
-												// pressed
+				}
 			}
 		});
 		btn_Login.setBounds(106, 250, 465, 29);
 		panel.add(btn_Login);
 
+		// label to login as a visitor to the library
 		JLabel lblLable_Visitor = new JLabel("Login as Vistor");
 		lblLable_Visitor.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblLable_Visitor.setBounds(464, 294, 147, 20);
 		panel.add(lblLable_Visitor);
 
+		// Sign up label in order to register as a new user
 		JLabel lblSignUp = new JLabel("Sign Up");
 		lblSignUp.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblSignUp.setBounds(396, 297, 46, 14);
 		panel.add(lblSignUp);
 
-		// if I pressed "Login as Vistor" Label--> then I will open the books
-		// TODO switch to the Vistor View
+		// if I pressed "Login as Vistor" Label--> then I will watch the library
+		// books
+
 		lblLable_Visitor.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				// open the vistor view frame
-//				BooksGUI p = new BooksGUI();
-//				frmLibraryManagementSystem.remove(panel11);
-//				frmLibraryManagementSystem.getContentPane().add(p);
-//				frmLibraryManagementSystem.revalidate();
-//				frmLibraryManagementSystem.repaint();
-
+				// open the visitor view
+				VisitorGUI l = null;
+				try {
+					l = new VisitorGUI();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				} catch (ParseException e1) {
+					e1.printStackTrace();
+				}
+				frmLibraryManagementSystem.remove(panel11);
+				frmLibraryManagementSystem.getContentPane().add(l);
+				frmLibraryManagementSystem.revalidate();
+				frmLibraryManagementSystem.repaint();
 			}
 		});
 
@@ -182,16 +188,9 @@ public class LibraryGUI extends JFrame {
 		});
 	}
 
-	@SuppressWarnings("unused")
-	public void inputListenerForLoginButton() throws SQLException, ParseException { // do what
-																	// inside
-																	// inputListener
+	public void inputListenerForLoginButton() throws SQLException, ParseException {
 		// when Login is pressed
-
-		String email = textField_Email.getText().toLowerCase(); // put the input
-																// email String
-																// to a lower
-																// case
+		String email = textField_Email.getText().toLowerCase();
 		textField_Email.setText("");
 
 		@SuppressWarnings("deprecation")
@@ -215,14 +214,13 @@ public class LibraryGUI extends JFrame {
 				frmLibraryManagementSystem.getContentPane().add(admin);
 				frmLibraryManagementSystem.revalidate();
 				frmLibraryManagementSystem.repaint();
-
 			} else {
+				// go to BookGUI panel
 				BooksGUI p = new BooksGUI(m);
 				frmLibraryManagementSystem.remove(panel11);
 				frmLibraryManagementSystem.getContentPane().add(p);
 				frmLibraryManagementSystem.revalidate();
 				frmLibraryManagementSystem.repaint();
-				//go to gui book
 			}
 		} else {
 			lblLabel_Invalid.setVisible(true);
@@ -231,7 +229,8 @@ public class LibraryGUI extends JFrame {
 		}
 
 	}
-	
+
+	// To check on the email if its in the correct format or not
 	public static boolean isEmailFormatCorrect(String email) {
 		Pattern p = Pattern.compile("\\b[a-z0-9._%-]+@[a-z0-9.-]+\\.[a-z]{2,4}\\b");
 		Matcher m = p.matcher(email);

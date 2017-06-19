@@ -21,11 +21,11 @@ public class Book {
 	
 	private int numberOfCopies;
 	
-	private int version;
+	private String version;
 	private int borrowPeriod; //in days
 
 	public Book(String name, String description, String category, String author, Date issue,
-			int version, int borrowPeriod, int no) {
+			String version, int borrowPeriod, int no) {
 
 		this.name = name;
 		this.description = description;
@@ -39,11 +39,11 @@ public class Book {
 	}
 
 
-	public int getVersion() {
+	public String getVersion() {
 		return version;
 	}
 
-	public void setVersion(int version) {
+	public void setVersion(String version) {
 		this.version = version;
 	}
 

@@ -4,7 +4,6 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -93,17 +92,14 @@ public class MemberRepository {
 			String category = stringQuery.getString("category");
 			String author = stringQuery.getString("author");
 			String bookIssue = stringQuery.getString("book_issue_date");
-		//	String entryDate = stringQuery.getString("entry_date");
 			String version = stringQuery.getString("version");
 			String borrowPeriod = stringQuery.getString("borrow_period");
 			String copies = stringQuery.getString("copies");
 
 			Date issue = new Date(new SimpleDateFormat("yyyy-MM-dd").parse(bookIssue).getTime());
-			// Timestamp tsEntry = Timestamp.valueOf(entryDate);
-			int vers = Integer.parseInt(version);
 			int borrow = Integer.parseInt(borrowPeriod);
 
-			Book book = new Book(name, desc, category, author, issue, vers, borrow, Integer.parseInt(copies));
+			Book book = new Book(name, desc, category, author, issue, version, borrow, Integer.parseInt(copies));
 			book.setId(Integer.parseInt(stringQuery.getString("book_id")));
 			result.add(book);
 		}
