@@ -80,7 +80,9 @@ public class RegisterGUI extends JPanel {
 
 				try {
 					try {
-						// call this method to register
+						/**
+						 * call this method to register the user
+						 */
 						inputListenerForRegisterButton();
 					} catch (ParseException e1) {
 						e1.printStackTrace();
@@ -124,6 +126,12 @@ public class RegisterGUI extends JPanel {
 	}
 
 	@SuppressWarnings("deprecation")
+	/**
+	 * this method to register the user
+	 * 
+	 * @throws SQLException
+	 * @throws ParseException
+	 */
 	public void inputListenerForRegisterButton() throws SQLException, ParseException {
 
 		String email = textField_Email.getText().toLowerCase();
@@ -155,7 +163,13 @@ public class RegisterGUI extends JPanel {
 			repaint();
 		}
 	}
-	// to check if the email format is correct or not
+
+	/**
+	 * // To check on the email if its in the correct format or not
+	 * 
+	 * @param email
+	 * @return true or false
+	 */
 	public static boolean isEmailFormatCorrect(String email) {
 		Pattern p = Pattern.compile("\\b[a-z0-9._%-]+@[a-z0-9.-]+\\.[a-z]{2,4}\\b");
 		Matcher m = p.matcher(email);

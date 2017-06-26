@@ -25,7 +25,7 @@ import javax.swing.table.DefaultTableModel;
  */
 
 /**
- * @author Peter
+ * @author Peter Bessada
  *
  */
 @SuppressWarnings("serial")
@@ -48,20 +48,23 @@ public class VisitorGUI extends JPanel {
 	 * @throws ParseException
 	 * @throws SQLException
 	 */
-
 	public Member getLoggedInMember() {
 		return this.loggedInMember;
 	}
 
+	/**
+	 * constructor of the visitor
+	 * 
+	 * @throws SQLException
+	 * @throws ParseException
+	 */
 	public VisitorGUI() throws SQLException, ParseException {
 
-	
 		bookRepository = new BookRepository();
 		setBackground(new Color(51, 102, 102));
 		setBounds(0, 0, 950, 575);
 		setLayout(null);
 
-	
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
 		tabbedPane.setBounds(64, 163, 738, 380);
 		add(tabbedPane);
@@ -110,8 +113,6 @@ public class VisitorGUI extends JPanel {
 
 		// -------------------------------------------------------------
 
-	
-
 		String x = "Visitor";
 		JLabel lblNewLabel_UserName = new JLabel(x);
 		lblNewLabel_UserName.setForeground(Color.GREEN);
@@ -143,6 +144,9 @@ public class VisitorGUI extends JPanel {
 
 		JButton btnSearchAll = new JButton("Search All");
 		btnSearchAll.addActionListener(new ActionListener() {
+			/**
+			 * this method is action listner for the search all
+			 */
 			public void actionPerformed(ActionEvent e) {
 
 				String searchBookInput = textField_SearchBookName.getText();
@@ -168,8 +172,8 @@ public class VisitorGUI extends JPanel {
 						allBooksArrayForTableA[i][5] = searchResults.get(i).getNumberOfCopies() + "";
 					}
 
-					DefaultTableModel userTableModel = new DefaultTableModel(allBooksArrayForTableA, new String[] { "Book name",
-							"Author name", "Availability", "Category", "Issue Date", "No. of Copies" }) {
+					DefaultTableModel userTableModel = new DefaultTableModel(allBooksArrayForTableA, new String[] {
+							"Book name", "Author name", "Availability", "Category", "Issue Date", "No. of Copies" }) {
 						@Override
 						public boolean isCellEditable(int row, int column) {
 							return false;
@@ -186,19 +190,19 @@ public class VisitorGUI extends JPanel {
 		});
 		btnSearchAll.setBounds(678, 118, 123, 24);
 		add(btnSearchAll);
-		
+
 		label_SearchByCategory = new JLabel("Search by Category");
 		label_SearchByCategory.setForeground(Color.GREEN);
 		label_SearchByCategory.setFont(new Font("Tahoma", Font.BOLD, 12));
 		label_SearchByCategory.setBounds(64, 124, 139, 14);
 		add(label_SearchByCategory);
-		
+
 		lblSearchByAuthor = new JLabel("Search by Author");
 		lblSearchByAuthor.setForeground(Color.GREEN);
 		lblSearchByAuthor.setFont(new Font("Tahoma", Font.BOLD, 12));
 		lblSearchByAuthor.setBounds(64, 89, 139, 14);
 		add(lblSearchByAuthor);
-		
+
 		lblSearchByBook = new JLabel("Search by Book");
 		lblSearchByBook.setForeground(Color.GREEN);
 		lblSearchByBook.setFont(new Font("Tahoma", Font.BOLD, 12));
@@ -206,8 +210,10 @@ public class VisitorGUI extends JPanel {
 		add(lblSearchByBook);
 
 		label_LogOut.addMouseListener(new MouseAdapter() {
+			/**
+			 * this method is used to return to the Login Page
+			 */
 			public void mouseClicked(MouseEvent e) {
-				// return to the Login Page
 				System.gc();
 				java.awt.Window win[] = java.awt.Window.getWindows();
 				for (int i = 0; i < win.length; i++) {

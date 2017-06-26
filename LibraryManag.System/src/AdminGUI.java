@@ -29,7 +29,7 @@ import javax.swing.table.DefaultTableModel;
  */
 
 /**
- * @author Peter
+ * @author Peter Bessada
  *
  */
 
@@ -50,22 +50,29 @@ public class AdminGUI extends JPanel {
 	private JTextField textField_SearchByAuthor;
 	private JTextField textField_SearchByBook;
 
-	/**
-	 * Create the panel.
-	 * 
-	 * @throws ParseException
-	 * @throws SQLException
-	 */
 	public void setClickedEmail(String email) {
 		this.clickedEmail = email;
 	}
 
+	/**
+	 * this constructor to Create the Admin panel.
+	 * 
+	 * @throws ParseException
+	 * @throws SQLException
+	 */
 	public AdminGUI() throws SQLException, ParseException {
 		bookRepository = new BookRepository();
 		memberRepository = new MemberRepository();
 		setBackground(new Color(51, 102, 102));
 		setBounds(0, 0, 950, 575);
 		setLayout(null);
+
+		JLabel lblBookCannotRemoved = new JLabel("The Book cannot be removed. It is borrowed by a User.");
+		lblBookCannotRemoved.setForeground(Color.RED);
+		lblBookCannotRemoved.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblBookCannotRemoved.setBounds(370, 159, 522, 14);
+		lblBookCannotRemoved.setVisible(false);
+		add(lblBookCannotRemoved);
 
 		// ----------------------- related to the LibraryBook tab
 
@@ -120,7 +127,10 @@ public class AdminGUI extends JPanel {
 
 		// Remove Book Button
 		JButton btnRemoveBook = new JButton("Remove Book");
-		// Remove Book Listener
+
+		/**
+		 * Remove Book Listener to remove the book from the Library
+		 */
 		btnRemoveBook.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int row = 0;
@@ -128,42 +138,43 @@ public class AdminGUI extends JPanel {
 					try {
 						final String title = (String) table_LibraryBooks.getValueAt(row, 0);
 						final String author = (String) table_LibraryBooks.getValueAt(row, 1);
-						bookRepository.removeBookFromDB(title, author);
-						// userTableModel.removeRow(table_LibraryBooks.getSelectedRow());
-
-						ArrayList<Book> allBooks = null;
-						try {
-							allBooks = bookRepository.getAllBooksInLibrary();
-						} catch (SQLException e1) {
-							e1.printStackTrace();
-						} catch (ParseException e1) {
-							e1.printStackTrace();
-						}
-						String[][] allBooksArrayForTable = new String[allBooks.size()][6];
-						for (int i = 0; i < allBooks.size(); i++) {
-							String avaliablity = allBooks.get(i).getNumberOfCopies() > 0 ? "A" : "N";
-							allBooksArrayForTable[i][0] = allBooks.get(i).getName();
-							allBooksArrayForTable[i][1] = allBooks.get(i).getAuthor();
-							allBooksArrayForTable[i][2] = avaliablity;
-							allBooksArrayForTable[i][3] = allBooks.get(i).getCategory();
-							allBooksArrayForTable[i][4] = allBooks.get(i).getBookIssueDate() + "";
-							allBooksArrayForTable[i][5] = allBooks.get(i).getNumberOfCopies() + "";
-						}
-
-						@SuppressWarnings("serial")
-						DefaultTableModel userTableModel = new DefaultTableModel(allBooksArrayForTable,
-								new String[] { "Book name", "Author name", "Availability", "Category", "Issue Date",
-										"No. of Copies" }) {
-							@Override
-							public boolean isCellEditable(int row, int column) {
-								return false;
+						boolean bookRemoved = false;
+						bookRemoved = bookRepository.removeBookFromDB(title, author);
+						if (bookRemoved) {
+							ArrayList<Book> allBooks = null;
+							try {
+								allBooks = bookRepository.getAllBooksInLibrary();
+							} catch (SQLException e1) {
+							} catch (ParseException e1) {
 							}
-						};
-						table_LibraryBooks.setModel(userTableModel);
+							String[][] allBooksArrayForTable = new String[allBooks.size()][6];
+							for (int i = 0; i < allBooks.size(); i++) {
+								String avaliablity = allBooks.get(i).getNumberOfCopies() > 0 ? "A" : "N";
+								allBooksArrayForTable[i][0] = allBooks.get(i).getName();
+								allBooksArrayForTable[i][1] = allBooks.get(i).getAuthor();
+								allBooksArrayForTable[i][2] = avaliablity;
+								allBooksArrayForTable[i][3] = allBooks.get(i).getCategory();
+								allBooksArrayForTable[i][4] = allBooks.get(i).getBookIssueDate() + "";
+								allBooksArrayForTable[i][5] = allBooks.get(i).getNumberOfCopies() + "";
+							}
 
+							@SuppressWarnings("serial")
+							DefaultTableModel userTableModel = new DefaultTableModel(allBooksArrayForTable,
+									new String[] { "Book name", "Author name", "Availability", "Category", "Issue Date",
+											"No. of Copies" }) {
+								@Override
+								public boolean isCellEditable(int row, int column) {
+									return false;
+								}
+							};
+							table_LibraryBooks.setModel(userTableModel);
+
+						} else {
+							lblBookCannotRemoved.setVisible(true);
+						}
 					} catch (Exception ex) {
-						ex.printStackTrace();
 						System.out.println("Cannot perform this remove!");
+
 					}
 
 				}
@@ -171,15 +182,26 @@ public class AdminGUI extends JPanel {
 			}
 		});
 		btnRemoveBook.setBounds(812, 242, 117, 35);
-		btnRemoveBook.setEnabled(false);
+		// btnRemoveBook.setEnabled(false);
 		add(btnRemoveBook);
+
+		JLabel lblUSerCannotDeleted = new JLabel("The User has books. User cannot be deleted.");
+		lblUSerCannotDeleted.setFont(new Font("Tahoma", Font.BOLD, 15));
+		lblUSerCannotDeleted.setForeground(new Color(255, 0, 0));
+		lblUSerCannotDeleted.setBounds(441, 163, 451, 14);
+		lblUSerCannotDeleted.setVisible(false);
+		add(lblUSerCannotDeleted);
 
 		// Add Book Button
 		JButton btnAddBook = new JButton("Add Book");
 
-		// Add Book Listener
+		/**
+		 * Add Book Listener to add new book to the library by the admin
+		 */
 		btnAddBook.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				lblUSerCannotDeleted.setVisible(false);
+				lblBookCannotRemoved.setVisible(false);
 				AddBookGUI newBook = new AddBookGUI();
 				newBook.setVisible(true);
 			}
@@ -189,28 +211,36 @@ public class AdminGUI extends JPanel {
 
 		// Remove User Button
 		JButton btnRemoveUser = new JButton("Remove User");
-
-		// Remove User Listener
+		/**
+		 * Remove User Listener from the database in case the admin would like
+		 * to do so
+		 */
 		btnRemoveUser.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				int row = 0;
+
 				if ((row = table_ViewUser.getSelectedRow()) != -1) {
 
 					try {
-						memberRepository.removeUserFromDB(clickedEmail);
-						userTableModel_MyUsers.removeRow(table_ViewUser.getSelectedRow());
-						// System.out.println(row);
-						final String value = (String) table_ViewUser.getValueAt(row, 1);
-						clickedEmail = value;
+						boolean removed = memberRepository.removeUserFromDB(clickedEmail);
+						if (removed) {
+							userTableModel_MyUsers.removeRow(table_ViewUser.getSelectedRow());
+							final String value = (String) table_ViewUser.getValueAt(row, 1);
+							clickedEmail = value;
+						} else {
+							lblUSerCannotDeleted.setVisible(true);
+						}
+
 					} catch (Exception ex) {
 						System.out.println("Cannot perform this remove!");
 					}
+
 				}
 
 			}
 		});
 		btnRemoveUser.setBounds(812, 299, 117, 35);
-		btnRemoveUser.setEnabled(false);
+		// btnRemoveUser.setEnabled(false);
 		add(btnRemoveUser);
 
 		// Tab to switch between Library books view and Users View
@@ -230,17 +260,12 @@ public class AdminGUI extends JPanel {
 		// row selection Listener
 		table_LibraryBooks.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
 			public void valueChanged(ListSelectionEvent event) {
-
 				if (true) {
 					btnRemoveBook.setEnabled(true);
 				}
-
-				// System.out.println(table.getValueAt(table.getSelectedRow(),
-				// 2));
 			}
 		});
 		scrollPane_LibraryBooks.setRowHeaderView(table_LibraryBooks);
-
 		table_LibraryBooks.setModel(userTableModel);
 		table_LibraryBooks.getColumnModel().getColumn(0).setPreferredWidth(236);
 		table_LibraryBooks.getColumnModel().getColumn(1).setPreferredWidth(90);
@@ -253,12 +278,15 @@ public class AdminGUI extends JPanel {
 		tabbedPane.addTab("View Users", null, scrollPane_ViewUser, null);
 
 		table_ViewUser = new JTable();
-
 		table_ViewUser.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		table_ViewUser.setFocusable(false);
 		table_ViewUser.setRowSelectionAllowed(true);
 
 		table_ViewUser.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+			/**
+			 * this method enable the userRemove button when one of the users
+			 * are selected by the admin
+			 */
 			public void valueChanged(ListSelectionEvent event) {
 				btnRemoveUser.setEnabled(true);
 				if (table_ViewUser.getSelectedRow() != -1) {
@@ -271,17 +299,14 @@ public class AdminGUI extends JPanel {
 						try {
 							myBooks = memberRepository.getBorrowedBooks(clickedEmail);
 						} catch (SQLException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						} catch (ParseException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 						Member clicked = null;
 						try {
 							clicked = memberRepository.getMemberByEmail(clickedEmail);
 						} catch (SQLException e) {
-							// TODO Auto-generated catch block
 							e.printStackTrace();
 						}
 						String[][] mybooksTest = new String[myBooks.size()][4];
@@ -292,10 +317,8 @@ public class AdminGUI extends JPanel {
 							try {
 								returnDate = bookRepository.getBookReturnDate(memberId, bookId);
 							} catch (SQLException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							} catch (ParseException e) {
-								// TODO Auto-generated catch block
 								e.printStackTrace();
 							}
 							mybooksTest[i][0] = myBooks.get(i).getName();
@@ -373,7 +396,7 @@ public class AdminGUI extends JPanel {
 		tabbedPane.addChangeListener(new ChangeListener() {
 			public void stateChanged(ChangeEvent e) {
 				if (tabbedPane.getSelectedIndex() == 0) {
-					btnRemoveUser.setEnabled(false);
+					lblUSerCannotDeleted.setVisible(false);
 					lblUsersBookList.setVisible(false);
 					scrollPane_UserBooks.setVisible(false);
 					table_ViewUser.clearSelection();
@@ -382,10 +405,8 @@ public class AdminGUI extends JPanel {
 					try {
 						allBooks = bookRepository.getAllBooksInLibrary();
 					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					} catch (ParseException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 					String[][] allBooksArrayForTable = new String[allBooks.size()][6];
@@ -410,9 +431,9 @@ public class AdminGUI extends JPanel {
 					table_LibraryBooks.setModel(userTableModel);
 				}
 				if (tabbedPane.getSelectedIndex() == 1) {
-					btnRemoveBook.setEnabled(false);
 					lblUsersBookList.setVisible(true);
 					scrollPane_UserBooks.setVisible(true);
+					lblBookCannotRemoved.setVisible(false);
 					table_LibraryBooks.clearSelection();
 				}
 			}
@@ -437,6 +458,10 @@ public class AdminGUI extends JPanel {
 		textField_SearchByCategory.setColumns(10);
 
 		JButton btn_SearchAll = new JButton("Search All");
+		/**
+		 * this is to search for a certain book in the database and update the
+		 * view of the GUI
+		 */
 		btn_SearchAll.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -506,16 +531,29 @@ public class AdminGUI extends JPanel {
 		lblSearchByAuther.setBounds(64, 97, 139, 14);
 		add(lblSearchByAuther);
 
-		JLabel lblSearchByBook = new JLabel("Search by Book");
+		JLabel lblSearchByBook = new JLabel("Search by Book Name");
 		lblSearchByBook.setForeground(Color.GREEN);
 		lblSearchByBook.setFont(new Font("Tahoma", Font.BOLD, 12));
 		lblSearchByBook.setBounds(64, 66, 139, 14);
 		add(lblSearchByBook);
 
-		lblLogOut.addMouseListener(new MouseAdapter() {
-			public void mouseClicked(MouseEvent e) {
-				// return to the Login Page
+		JButton btnOverdue = new JButton("OverDue Report");
+		btnOverdue.setFont(new Font("Tahoma", Font.BOLD, 10));
+		btnOverdue.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				lblUSerCannotDeleted.setVisible(false);
+				lblBookCannotRemoved.setVisible(false);
 
+			}
+		});
+		btnOverdue.setBounds(812, 355, 117, 35);
+		add(btnOverdue);
+
+		lblLogOut.addMouseListener(new MouseAdapter() {
+			/**
+			 * this method to return to the Login Page
+			 */
+			public void mouseClicked(MouseEvent e) {
 				System.gc();
 				java.awt.Window win[] = java.awt.Window.getWindows();
 				for (int i = 0; i < win.length; i++) {
@@ -523,7 +561,6 @@ public class AdminGUI extends JPanel {
 					win[i] = null;
 				}
 				LibraryGUI.main(null);
-
 			}
 		});
 

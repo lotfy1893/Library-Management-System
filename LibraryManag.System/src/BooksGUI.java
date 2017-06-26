@@ -46,13 +46,6 @@ public class BooksGUI extends JPanel {
 	private JLabel lblSearchByBook;
 
 	/**
-	 * Create the panel.
-	 * 
-	 * @throws ParseException
-	 * @throws SQLException
-	 */
-
-	/**
 	 * 
 	 * @return the logged in member
 	 */
@@ -60,7 +53,13 @@ public class BooksGUI extends JPanel {
 		return this.loggedInMember;
 	}
 
-	// this is the constructor to build in the Book GUI page
+	/**
+	 * this is the constructor to build the panel of Book GUI page
+	 * 
+	 * @throws ParseException
+	 * @throws SQLException
+	 */
+
 	public BooksGUI(Member loggedInMember) throws SQLException, ParseException {
 
 		lbl_NoMorethan3Books = new JLabel("Can not borrow more than 3 books or you already have the book!");
@@ -169,14 +168,17 @@ public class BooksGUI extends JPanel {
 			}
 		});
 		btnBorrowBook.setBounds(812, 242, 117, 35);
-		btnBorrowBook.setEnabled(false);
+		//btnBorrowBook.setEnabled(false);
 		add(btnBorrowBook);
 
 		// Return Book Button to return my books back to the library
 		JButton btnReturnBook = new JButton("Return Book");
 
-		// Return Book Listener
 		btnReturnBook.addActionListener(new ActionListener() {
+			/**
+			 * Return Book Listener to return the book borrowed by the user to
+			 * the Library
+			 */
 			public void actionPerformed(ActionEvent e) {
 				int row = 0;
 				final Member loggedMember = getLoggedInMember();
@@ -256,7 +258,6 @@ public class BooksGUI extends JPanel {
 							};
 							table_LibraryBooks.setModel(userTableModel);
 						}
-
 					} catch (SQLException e1) {
 						e1.printStackTrace();
 					}
@@ -265,7 +266,7 @@ public class BooksGUI extends JPanel {
 			}
 		});
 		btnReturnBook.setBounds(812, 184, 117, 35);
-		btnReturnBook.setEnabled(false);
+	//	btnReturnBook.setEnabled(false);
 		add(btnReturnBook);
 
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
@@ -346,18 +347,19 @@ public class BooksGUI extends JPanel {
 
 		// -------------------------------------------------------------
 
-		// tab Listner to listen when changing between tabs (Library books or My
-		// books)
 		tabbedPane.addChangeListener(new ChangeListener() {
+			/**
+			 * tab Listner to listen when changing between tabs (Library books
+			 * or My books)
+			 */
 			public void stateChanged(ChangeEvent e) {
 				if (tabbedPane.getSelectedIndex() == 0)
-					btnReturnBook.setEnabled(false);
+					//btnReturnBook.setEnabled(false);
 				table_MyBooks.clearSelection();
 				if (tabbedPane.getSelectedIndex() == 1)
-					btnBorrowBook.setEnabled(false);
+					//btnBorrowBook.setEnabled(false);
 				lbl_NoMorethan3Books.setVisible(false);
 				table_LibraryBooks.clearSelection();
-
 			}
 		});
 
@@ -393,9 +395,12 @@ public class BooksGUI extends JPanel {
 
 		JButton btnSearchAll = new JButton("Search All");
 		btnSearchAll.addActionListener(new ActionListener() {
+			/**
+			 * search the library books based on the fields decided by the user
+			 * then update the GUI with the result
+			 */
 			public void actionPerformed(ActionEvent e) {
-				// search the library books based on the fields decided by the
-				// user
+
 				String searchBookInput = textField_SearchBookName.getText();
 				textField_SearchBookName.setText("");
 
@@ -432,7 +437,6 @@ public class BooksGUI extends JPanel {
 				} catch (ParseException e1) {
 					e1.printStackTrace();
 				}
-
 			}
 		});
 		btnSearchAll.setBounds(678, 118, 123, 24);
@@ -457,8 +461,10 @@ public class BooksGUI extends JPanel {
 		add(lblSearchByBook);
 
 		label_LogOut.addMouseListener(new MouseAdapter() {
+			/**
+			 * this method to return to the Login Page
+			 */
 			public void mouseClicked(MouseEvent e) {
-				// return to the Login Page
 				System.gc();
 				java.awt.Window win[] = java.awt.Window.getWindows();
 				for (int i = 0; i < win.length; i++) {
@@ -466,7 +472,6 @@ public class BooksGUI extends JPanel {
 					win[i] = null;
 				}
 				LibraryGUI.main(null);
-
 			}
 		});
 

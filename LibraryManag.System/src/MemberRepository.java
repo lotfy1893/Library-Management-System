@@ -22,10 +22,17 @@ public class MemberRepository {
 
 	}
 
+	/**
+	 * gets the user from the database by unique email maps it the object type
+	 * Member
+	 * 
+	 * @param email
+	 * @return Member with the email
+	 * @throws SQLException
+	 */
 	public Member getMemberByEmail(String email) throws SQLException {
 		Statement myStmt = myConn.createStatement();
 		ResultSet stringQuery = myStmt.executeQuery("SELECT * FROM member WHERE email='" + email + "'");
-		// TODO query to retrieve member all info by id
 
 		Member loggedInMember = null;
 		while (stringQuery.next()) {
@@ -42,11 +49,27 @@ public class MemberRepository {
 		return loggedInMember;
 	}
 
+	/**
+	 * gets member id by email
+	 * 
+	 * @param email
+	 * @return id int
+	 * @throws SQLException
+	 */
 	public int getIdMemberByEmail(String email) throws SQLException {
 		Member m = getMemberByEmail(email);
 		return m.getId();
 	}
 
+	/**
+	 * this method takes member with all information and registers him/her in
+	 * our db
+	 * 
+	 * @param member
+	 * @return true if registered and false -> if the registration fails for any
+	 *         reason
+	 * @throws SQLException
+	 */
 	public boolean registerNewMember(Member member) throws SQLException {
 
 		if (isMemberExists(member.getEmail())) {
@@ -70,20 +93,21 @@ public class MemberRepository {
 		}
 	}
 
+	/**
+	 * given the email of the user we get all the books that he already has in
+	 * the current time
+	 * 
+	 * @param email
+	 * @return list of books
+	 * @throws SQLException
+	 * @throws ParseException
+	 */
 	public ArrayList<Book> getBorrowedBooks(String email) throws SQLException, ParseException {
-		// TODO query to retrive all the member books
 		Statement myStmt = myConn.createStatement();
 		ResultSet stringQuery = myStmt.executeQuery(
 				"select b.book_id,m.email,b.book_name,b.description,b.category,b.author,b.book_issue_date,b.entry_date,b.version,b.borrow_period,b.copies from book b,borrow r, member m where m.email='"
 						+ email + "'and m.member_id= r.member_id and r.book_id=b.book_id and r.status='A'");
 
-		// where
-		// also
-		// the
-		// status
-		// is
-		// Active
-		// //TODO
 		ArrayList<Book> result = new ArrayList<>();
 
 		while (stringQuery.next()) {
@@ -107,8 +131,14 @@ public class MemberRepository {
 		return result;
 	}
 
+	/**
+	 * takes email and check if this member already exists in our database
+	 * 
+	 * @param email
+	 * @return true if the member exists and false otherwise
+	 * @throws SQLException
+	 */
 	public boolean isMemberExists(String email) throws SQLException {
-		// TODO query to see whether the member is in our db or not
 		Statement myStmt = myConn.createStatement();
 		ResultSet stringQuery = myStmt.executeQuery("SELECT * FROM member where email = '" + email + "'");
 		if (!stringQuery.next()) {
@@ -117,8 +147,17 @@ public class MemberRepository {
 		return true;
 	}
 
+	/**
+	 * this method takes email and password in the login process in gui and
+	 * check if the password matches the email if the email exists in the first
+	 * place ofcourse
+	 * 
+	 * @param email
+	 * @param password
+	 * @return Member with all his info if the login succeeds
+	 * @throws SQLException
+	 */
 	public Member passwordMatchesForLogin(String email, String password) throws SQLException {
-		// TODO query to check matching email and password invoked with login
 		if (!isMemberExists(email))
 			return null;
 		Statement myStmt = myConn.createStatement();
@@ -139,19 +178,21 @@ public class MemberRepository {
 	/**
 	 * this method returns all members in db
 	 * 
-	 * @return
+	 * @return list of all users
 	 * @throws SQLException
 	 */
 	public ArrayList<Member> getAllMembers() throws SQLException {
 		Statement myStmt = myConn.createStatement();
 		ResultSet stringQuery = myStmt.executeQuery("SELECT * FROM member");
-		// TODO query to retrieve member all info by id
 		ArrayList<Member> allMembers = new ArrayList<>();
 		Member loggedInMember = null;
 		while (stringQuery.next()) {
+			String queryResultEmail = stringQuery.getString("email");
+			if (queryResultEmail.equalsIgnoreCase("admin@admin.com")) {
+				continue;
+			}
 			String queryResultID = stringQuery.getString("member_id");
 			String queryResultFullName = stringQuery.getString("full_name");
-			String queryResultEmail = stringQuery.getString("email");
 			String queryResultType = stringQuery.getString("type");
 			String queryResultPassword = stringQuery.getString("password");
 
@@ -160,14 +201,8 @@ public class MemberRepository {
 			loggedInMember.setAdmin(queryResultType.equalsIgnoreCase("member") ? false : true);
 			allMembers.add(loggedInMember);
 		}
+		
 		return allMembers;
-	}
-
-	public boolean exceededReturnDue(int id) {
-		// TODO query to check that the user doesn't have a book that excedds
-		// due
-		// ResultSet myRs = myStmt.executeQuery("");
-		return true;
 	}
 
 	/**
@@ -185,8 +220,6 @@ public class MemberRepository {
 			myStmt.executeUpdate("DELETE FROM member WHERE email = '" + email + "'");
 			return true;
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 			return false;
 		}
 

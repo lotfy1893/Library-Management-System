@@ -56,6 +56,12 @@ public class BooksRepositoryTest {
 		assertTrue(removed);
 	}
 
+	/**
+	 * tests if the borrow process for a given book and member is working fine
+	 * 
+	 * @throws SQLException
+	 * @throws ParseException
+	 */
 	@Test
 	public void testBorrowBookForAMember() throws SQLException, ParseException {
 		boolean registerMember = memberRepository.registerNewMember(testMember);
@@ -76,6 +82,9 @@ public class BooksRepositoryTest {
 		assertEquals(noCopies - 1, b.getNumberOfCopies());
 	}
 
+	/**
+	 * test search for drama books
+	 */
 	@Test
 	public void testSearchForDramaBooks() {
 		try {
@@ -88,6 +97,10 @@ public class BooksRepositoryTest {
 			e.printStackTrace();
 		}
 	}
+
+	/**
+	 * test search for a book by name of the author
+	 */
 	@Test
 	public void testSearchForBooksByAuthor() {
 		try {
@@ -100,6 +113,10 @@ public class BooksRepositoryTest {
 			e.printStackTrace();
 		}
 	}
+
+	/**
+	 * test search for a book by initials of the book name
+	 */
 	@Test
 	public void testSearchForBooksByFirstLetterOfTitle() {
 		try {
@@ -113,7 +130,25 @@ public class BooksRepositoryTest {
 		}
 	}
 
-	
+	public void checkThatBorrowFailsIFTheUserHasAlreadyAcopy() throws SQLException, ParseException {
+
+		testMember = memberRepository.getMemberByEmail(testMember.getEmail());
+
+		boolean borrow = bookRepository.borrowBook(testMember, b);
+		assertTrue(borrow);
+
+		boolean borrowAgain = bookRepository.borrowBook(testMember, b);
+		assertFalse(borrowAgain);
+
+	}
+
+	/**
+	 * cleans the db from the created instances in the test not to overwhelm the
+	 * db
+	 * 
+	 * @throws SQLException
+	 */
+
 	@After
 	public void cleanDB() throws SQLException {
 		bookRepository.removeBorrowedBookTransaction(testMember.getId(), b.getId());

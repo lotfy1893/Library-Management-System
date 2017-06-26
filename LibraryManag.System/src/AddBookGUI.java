@@ -23,7 +23,7 @@ import javax.swing.border.EmptyBorder;
  */
 
 /**
- * @author Peter
+ * @author Peter Bessada
  *
  */
 @SuppressWarnings("serial")
@@ -55,7 +55,7 @@ public class AddBookGUI extends JFrame {
 	}
 
 	/**
-	 * Create the frame.
+	 * this is the constructor to Create the frame.
 	 */
 	public AddBookGUI() {
 
@@ -164,14 +164,13 @@ public class AddBookGUI extends JFrame {
 		lblBookAlreadyExists.setBounds(181, 293, 290, 14);
 		lblBookAlreadyExists.setVisible(false);
 		contentPane.add(lblBookAlreadyExists);
-		
+
 		JLabel lblBookRegisteredSuccessfully = new JLabel("Book registered Successfully");
 		lblBookRegisteredSuccessfully.setForeground(new Color(34, 139, 34));
 		lblBookRegisteredSuccessfully.setFont(new Font("Tahoma", Font.BOLD, 12));
 		lblBookRegisteredSuccessfully.setBounds(202, 278, 240, 14);
 		lblBookRegisteredSuccessfully.setVisible(false);
 		contentPane.add(lblBookRegisteredSuccessfully);
-
 
 		JLabel lblVersion = new JLabel("Version*");
 		lblVersion.setFont(new Font("Tahoma", Font.BOLD, 12));
@@ -208,6 +207,10 @@ public class AddBookGUI extends JFrame {
 
 		JButton Button_EnterData = new JButton("Enter Data");
 		Button_EnterData.setFont(new Font("Tahoma", Font.PLAIN, 12));
+		/**
+		 * this is the action listner of the button Enter Data we take all the
+		 * inputs from the Admin and save them on the data base
+		 */
 		Button_EnterData.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 
@@ -299,10 +302,16 @@ public class AddBookGUI extends JFrame {
 		});
 		Button_EnterData.setBounds(77, 318, 429, 31);
 		contentPane.add(Button_EnterData);
-		
-		
+
 	}
 
+	/**
+	 * this method is used to check the format of the entry date
+	 * 
+	 * @param date
+	 *            as a string
+	 * @return true or false based on the validity of the date format
+	 */
 	private static boolean isValidDateFormatForParing(String date) {
 		if (date == null || !date.matches("\\d{4}-[01]\\d-[0-3]\\d")) {
 			return false;

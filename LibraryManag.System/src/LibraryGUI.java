@@ -66,7 +66,10 @@ public class LibraryGUI extends JFrame {
 	 * @wbp.parser.entryPoint
 	 */
 	private void initialize() {
-		// this is my main frame that will carry all panels in the future
+		/**
+		 * this is my main frame that will carry all panels in the future
+		 */
+
 		frmLibraryManagementSystem = new JFrame();
 		frmLibraryManagementSystem.setTitle("Library Management System");
 		frmLibraryManagementSystem.setResizable(false);
@@ -77,8 +80,9 @@ public class LibraryGUI extends JFrame {
 		panel11.setBounds(0, 0, 950, 575);
 		panel11.setLayout(null);
 		panel11.add(panel);
-
-		// To define title to my page
+		/**
+		 * To define title to my page
+		 */
 		JLabel lblLabel_Title = new JLabel("Library Management System");
 		lblLabel_Title.setForeground(new Color(51, 204, 0));
 		lblLabel_Title.setFont(new Font("Tahoma", Font.BOLD | Font.ITALIC, 34));
@@ -122,11 +126,13 @@ public class LibraryGUI extends JFrame {
 		passwordField = new JPasswordField();
 		passwordField.setBounds(106, 186, 465, 29);
 		panel.add(passwordField);
-		// passwordField.getText();
 
 		JButton btn_Login = new JButton("Login");
 		btn_Login.setFont(new Font("Tahoma", Font.PLAIN, 12));
 		btn_Login.addActionListener(new ActionListener() {
+			/**
+			 * this is the action listener of the login button
+			 */
 			public void actionPerformed(ActionEvent e) {
 				try {
 					try {
@@ -141,21 +147,28 @@ public class LibraryGUI extends JFrame {
 		});
 		btn_Login.setBounds(106, 250, 465, 29);
 		panel.add(btn_Login);
+		/**
+		 * label to login as a visitor to the library
+		 */
 
-		// label to login as a visitor to the library
 		JLabel lblLable_Visitor = new JLabel("Login as Vistor");
 		lblLable_Visitor.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblLable_Visitor.setBounds(464, 294, 147, 20);
 		panel.add(lblLable_Visitor);
 
-		// Sign up label in order to register as a new user
+		/**
+		 * Sign up label in order to register as a new user
+		 */
+
 		JLabel lblSignUp = new JLabel("Sign Up");
 		lblSignUp.setFont(new Font("Tahoma", Font.PLAIN, 13));
 		lblSignUp.setBounds(396, 297, 46, 14);
 		panel.add(lblSignUp);
 
-		// if I pressed "Login as Vistor" Label--> then I will watch the library
-		// books
+		/**
+		 * if I pressed "Login as Visitor" Label--> then I will watch the
+		 * library books
+		 */
 
 		lblLable_Visitor.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -188,6 +201,14 @@ public class LibraryGUI extends JFrame {
 		});
 	}
 
+	/**
+	 * this method is called when the login button is pressed it either switch
+	 * to the Admin GUI Panel or to the library view if the user is a Member or
+	 * we can switch to the basic library view if the user is visitor
+	 * 
+	 * @throws SQLException
+	 * @throws ParseException
+	 */
 	public void inputListenerForLoginButton() throws SQLException, ParseException {
 		// when Login is pressed
 		String email = textField_Email.getText().toLowerCase();
@@ -230,7 +251,12 @@ public class LibraryGUI extends JFrame {
 
 	}
 
-	// To check on the email if its in the correct format or not
+	/**
+	 * // To check on the email if its in the correct format or not
+	 * 
+	 * @param email
+	 * @return true or false
+	 */
 	public static boolean isEmailFormatCorrect(String email) {
 		Pattern p = Pattern.compile("\\b[a-z0-9._%-]+@[a-z0-9.-]+\\.[a-z]{2,4}\\b");
 		Matcher m = p.matcher(email);

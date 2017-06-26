@@ -1,6 +1,8 @@
 import static org.junit.Assert.*;
 
 import java.sql.SQLException;
+import java.text.ParseException;
+import java.util.ArrayList;
 
 import org.junit.After;
 import org.junit.Before;
@@ -58,6 +60,69 @@ public class MemberRepositoryTest {
 		assertEquals(m.getFullName(), "Peter Bessada");
 	}
 
+	/**
+	 * tests if the method getsId of the member by email mapping is working
+	 * properly
+	 * 
+	 * @throws SQLException
+	 */
+	@Test
+	public void testGetMemberIdbyEmail() throws SQLException {
+		boolean register = memberRepository.registerNewMember(testMember);
+		int m = 0;
+		if (register) {
+			m = memberRepository.getIdMemberByEmail("test@test.com");
+		}
+		assertNotEquals(0, m);
+	}
+
+	/**
+	 * testing the GET/borrowedBooks for a given member is working
+	 * 
+	 * @throws SQLException
+	 * @throws ParseException
+	 */
+	@Test
+	public void testGetBorrowedBooks() throws SQLException, ParseException {
+		// we will test the borrowed books for an already existing member with
+		// mail "joe@gmail.com"
+		// sofar this guy has two borrowed books
+		ArrayList<Book> books = memberRepository.getBorrowedBooks("joe@gmail.com");
+		assertEquals(2, books.size());
+	}
+
+	/**
+	 * test if the wrong password is detected or not
+	 * 
+	 * @throws SQLException
+	 */
+	@Test
+	public void testFailedLoginEmailAndPassword() throws SQLException {
+		String email = "joe@gmail.com";
+		String password = "joejoe";
+
+		Member logged = memberRepository.passwordMatchesForLogin(email, password);
+		assertEquals(null, logged);
+	}
+
+	/**
+	 * test successful login credentials
+	 * 
+	 * @throws SQLException
+	 */
+
+	@Test
+	public void testSuccessfulLoginEmailAndPassword() throws SQLException {
+		String email = "joe@gmail.com";
+		String password = "1234";
+
+		Member logged = memberRepository.passwordMatchesForLogin(email, password);
+		assertNotEquals(null, logged);
+	}
+
+	/**
+	 * cleaning the db from the instances created in the test
+	 */
 	@After
 	public void cleanUpDB() {
 		memberRepository.removeUserFromDB("test@test.com");
