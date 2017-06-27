@@ -10,6 +10,7 @@ import java.text.ParseException;
 import java.util.ArrayList;
 
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -537,12 +538,21 @@ public class AdminGUI extends JPanel {
 		lblSearchByBook.setBounds(64, 66, 139, 14);
 		add(lblSearchByBook);
 
-		JButton btnOverdue = new JButton("OverDue Report");
+		JButton btnOverdue = new JButton("OverDue Tool");
 		btnOverdue.setFont(new Font("Tahoma", Font.BOLD, 10));
 		btnOverdue.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				lblUSerCannotDeleted.setVisible(false);
 				lblBookCannotRemoved.setVisible(false);
+				OverdueSearchApp frame = null;
+				try {
+					frame = new OverdueSearchApp();
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				frame.setVisible(true);
+				
 
 			}
 		});

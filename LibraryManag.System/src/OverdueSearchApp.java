@@ -120,7 +120,8 @@ public class OverdueSearchApp extends JFrame {
 				} catch (Exception exc) {
 					JOptionPane.showMessageDialog(OverdueSearchApp.this, "Error: " + exc, "Error", JOptionPane.ERROR_MESSAGE); 
 				}
-				
+				table.getColumnModel().getColumn(0).setPreferredWidth(70);
+				table.getColumnModel().getColumn(1).setPreferredWidth(200);
 			}
 		});
 		panel.add(btnSearch);
