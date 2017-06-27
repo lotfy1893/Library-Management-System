@@ -2,8 +2,7 @@ import java.util.List;
 
 import javax.swing.table.AbstractTableModel;
 
-
-
+@SuppressWarnings("serial")
 class OverdueTableModel extends AbstractTableModel {
 
 	private static final int OverdueDays = 0;
@@ -13,8 +12,7 @@ class OverdueTableModel extends AbstractTableModel {
 	private static final int BorroweDate = 4;
 	private static final int ReturnDate = 5;
 
-	private String[] columnNames = { "OverdueDays","Email", "BookName", "EntryDate",
-			"BorroweDate","ReturnDate" };
+	private String[] columnNames = { "OverdueDays", "Email", "BookName", "EntryDate", "BorroweDate", "ReturnDate" };
 	private List<OverDue> members;
 
 	public OverdueTableModel(List<OverDue> overdueMembers) {
@@ -42,8 +40,8 @@ class OverdueTableModel extends AbstractTableModel {
 		OverDue tempMembers = members.get(row);
 
 		switch (col) {
-			case OverdueDays:
-				return tempMembers.getOverdueDays();
+		case OverdueDays:
+			return tempMembers.getOverdueDays();
 		case Email:
 			return tempMembers.getEmail();
 		case BookName:
@@ -52,8 +50,8 @@ class OverdueTableModel extends AbstractTableModel {
 			return tempMembers.getEntryDate();
 		case BorroweDate:
 			return tempMembers.getBorroweDate();
-			case ReturnDate:
-				return tempMembers.getReturnDate();
+		case ReturnDate:
+			return tempMembers.getReturnDate();
 		default:
 			return tempMembers.getBookName();
 		}

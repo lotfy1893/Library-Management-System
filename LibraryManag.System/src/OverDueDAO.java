@@ -1,7 +1,12 @@
-import java.util.*;
-import java.sql.*;
-import java.io.*;
-import java.math.BigDecimal;
+import java.io.FileInputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
 
 /**
  *
@@ -25,7 +30,6 @@ public class OverDueDAO {
 		// connect to database
 		myConn = DriverManager.getConnection(dburl, user, password);
 
-
 	}
 
 	/**
@@ -42,7 +46,7 @@ public class OverDueDAO {
 		try {
 			myStmt = myConn.createStatement();
 			myRs = myStmt.executeQuery(
-					"select (datediff(curdate(),r.return_date)) overdueDays,m.email email,b.book_name bookName,b.entry_date entryDate,r.borrow_date borroweDate,r.return_date returnDate from book b,borrow r, member m where datediff(r.return_date, r.borrow_date)>15 and  m.member_id= r.member_id and r.book_id=b.book_id");
+					"select (datediff(curdate(),r.return_date)) overdueDays,m.email email,b.book_name bookName,b.entry_date entryDate,r.borrow_date borroweDate,r.return_date returnDate from book b,borrow r, member m where datediff(r.return_date, r.borrow_date)>2 and  m.member_id= r.member_id and r.book_id=b.book_id");
 
 			while (myRs.next()) {
 				OverDue tempOverdue = convertRowToOverDue(myRs);
@@ -63,15 +67,20 @@ public class OverDueDAO {
 
 		try {
 
-//			myStmt = myConn.prepareStatement(
-//					"select (datediff(curdate(),r.return_date)) OverdueDays,m.email email,b.book_name bookName,b.entry_date entryDate,r.borrow_date borroweDate,r.return_date returnDate from book b,borrow r, member m where datediff(r.return_date, r.borrow_date)>2 and  m.member_id= r.member_id and r.book_id=b.book_id and m.email='"
-//							+ email + "'");
+			// myStmt = myConn.prepareStatement(
+			// "select (datediff(curdate(),r.return_date)) OverdueDays,m.email
+			// email,b.book_name bookName,b.entry_date entryDate,r.borrow_date
+			// borroweDate,r.return_date returnDate from book b,borrow r, member
+			// m where datediff(r.return_date, r.borrow_date)>2 and m.member_id=
+			// r.member_id and r.book_id=b.book_id and m.email='"
+			// + email + "'");
 			myStmt = myConn.createStatement();
 
 			// myStmt.setString(1, email);
 
-			myRs = myStmt.executeQuery("select (datediff(curdate(),r.return_date)) OverdueDays,m.email email,b.book_name bookName,b.entry_date entryDate,r.borrow_date borroweDate,r.return_date returnDate from book b,borrow r, member m where datediff(r.return_date, r.borrow_date)>15 and  m.member_id= r.member_id and r.book_id=b.book_id and m.email='"
-					+ email + "'");
+			myRs = myStmt.executeQuery(
+					"select (datediff(curdate(),r.return_date)) OverdueDays,m.email email,b.book_name bookName,b.entry_date entryDate,r.borrow_date borroweDate,r.return_date returnDate from book b,borrow r, member m where datediff(r.return_date, r.borrow_date)>2 and  m.member_id= r.member_id and r.book_id=b.book_id and m.email='"
+							+ email + "'");
 
 			while (myRs.next()) {
 				OverDue tempOverdue = convertRowToOverDue(myRs);
