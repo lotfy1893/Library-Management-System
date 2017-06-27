@@ -25,7 +25,7 @@ public class OverDueDAO {
 		// connect to database
 		myConn = DriverManager.getConnection(dburl, user, password);
 
-		System.out.println("DB connection successful to: " + dburl);
+
 	}
 
 	/**

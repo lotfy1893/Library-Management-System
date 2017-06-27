@@ -544,16 +544,7 @@ public class AdminGUI extends JPanel {
 			public void actionPerformed(ActionEvent e) {
 				lblUSerCannotDeleted.setVisible(false);
 				lblBookCannotRemoved.setVisible(false);
-				OverdueSearchApp frame = null;
-				try {
-					frame = new OverdueSearchApp();
-				} catch (Exception e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-				frame.setVisible(true);
 				
-
 			}
 		});
 		btnOverdue.setBounds(812, 355, 117, 35);
