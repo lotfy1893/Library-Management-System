@@ -9,10 +9,10 @@ class OverdueTableModel extends AbstractTableModel {
 	private static final int Email = 1;
 	private static final int BookName = 2;
 	private static final int EntryDate = 3;
-	private static final int BorroweDate = 4;
+	private static final int BorrowDate = 4;
 	private static final int ReturnDate = 5;
 
-	private String[] columnNames = { "OverdueDays", "Email", "BookName", "EntryDate", "BorroweDate", "ReturnDate" };
+	private String[] columnNames = { "OverdueDays", "Email", "BookName", "EntryDate", "BorrowDate", "ReturnDate" };
 	private List<OverDue> members;
 
 	public OverdueTableModel(List<OverDue> overdueMembers) {
@@ -48,8 +48,8 @@ class OverdueTableModel extends AbstractTableModel {
 			return tempMembers.getBookName();
 		case EntryDate:
 			return tempMembers.getEntryDate();
-		case BorroweDate:
-			return tempMembers.getBorroweDate();
+		case BorrowDate:
+			return tempMembers.getBorrowDate();
 		case ReturnDate:
 			return tempMembers.getReturnDate();
 		default:
