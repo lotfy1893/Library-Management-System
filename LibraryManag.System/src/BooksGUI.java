@@ -69,6 +69,8 @@ public class BooksGUI extends JPanel {
 		lbl_NoMorethan3Books.setVisible(false);
 		add(lbl_NoMorethan3Books);
 
+		
+		
 		this.loggedInMember = loggedInMember;
 		bookRepository = new BookRepository();
 		memberRepository = new MemberRepository();

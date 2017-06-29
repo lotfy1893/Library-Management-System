@@ -144,7 +144,6 @@ public class RegisterGUI extends JPanel {
 		passwordField.setText("");
 
 		Member newAddedMember = new Member(email, password, fullName);
-		System.out.println(newAddedMember.getFullName());
 		if (!isEmailFormatCorrect(email) || password.equals("")) {
 			lblLabel_Invalid.setVisible(true);
 			revalidate();
@@ -156,6 +155,7 @@ public class RegisterGUI extends JPanel {
 				return;
 			}
 			// if the user already exists then switch to the BooksGUI Panel
+			newAddedMember = memberRepository.getMemberByEmail(newAddedMember.getEmail());
 			BooksGUI p = new BooksGUI(newAddedMember);
 			this.removeAll();
 			add(p);

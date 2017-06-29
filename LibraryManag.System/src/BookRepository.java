@@ -179,7 +179,7 @@ public class BookRepository {
 
 			myStmt.executeUpdate("INSERT INTO `borrow` (return_date,borrow_date,member_id,book_id,status) VALUES"
 					+ "(DATE_ADD(CURDATE() , interval " + borrowPeriod + " day),CURDATE()," + borrower.getId() + ","
-					+ borrowedBook.getId() + "," + "'A')");
+					+ borrowedBook.getId() + "," + "'A');");
 			decrementCopiesOfBook(borrowedBook);
 			return true;
 		} catch (SQLException ex) {
