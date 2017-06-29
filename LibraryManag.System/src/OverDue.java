@@ -1,25 +1,27 @@
 /**
- *
  * 
- *
+ * @author Bassem E-Hamedy
+ * @version : V 3
+ * OverDue object class created to have an object of over view to hold the Overdue members 
  */
+
 public class OverDue {
 
 	private int overdueDays;
 	private String email;
 	private String bookName;
 	private String entryDate;
-	private String borroweDate;
+	private String BorrowDate;
 	private String returnDate;
 
-	public OverDue(int overdueDays, String email, String bookName, String entryDate, String borroweDate,
+	public OverDue(int overdueDays, String email, String bookName, String entryDate, String BorrowDate,
 			String returnDate) {
 		super();
 		this.overdueDays = overdueDays;
 		this.email = email;
 		this.bookName = bookName;
 		this.entryDate = entryDate;
-		this.borroweDate = borroweDate;
+		this.BorrowDate = BorrowDate;
 		this.returnDate = returnDate;
 	}
 
@@ -55,12 +57,12 @@ public class OverDue {
 		this.email = email;
 	}
 
-	public String getBorroweDate() {
-		return borroweDate;
+	public String getBorrowDate() {
+		return BorrowDate;
 	}
 
-	public void setBorroweDate(String borroweDate) {
-		this.borroweDate = borroweDate;
+	public void setBorrowDate(String BorrowDate) {
+		this.BorrowDate = BorrowDate;
 	}
 
 	public String getReturnDate() {
@@ -71,11 +73,15 @@ public class OverDue {
 		this.returnDate = returnDate;
 	}
 
-	@Override
+	/**
+	 * @Override
+	 * Returns a formatted Overdue Object using the below sequence
+	 */
+	
 	public String toString() {
 		return String.format(
-				"Overdue [overdueDays=%s, email=%s, bookName=%s, entryDate=%s, borroweDate=%s, returnDate=%s]",
-				overdueDays, email, bookName, entryDate, borroweDate, returnDate);
+				"Overdue [overdueDays=%s, email=%s, bookName=%s, entryDate=%s, BorrowDate=%s, returnDate=%s]",
+				overdueDays, email, bookName, entryDate, BorrowDate, returnDate);
 	}
 
 }

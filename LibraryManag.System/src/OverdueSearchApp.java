@@ -18,7 +18,12 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellRenderer;
-
+/**
+ * 
+ * @author Bassem E-Hamed
+ * @version 3
+ *
+ */
 @SuppressWarnings("serial")
 public class OverdueSearchApp extends JFrame {
 
@@ -61,7 +66,7 @@ public class OverdueSearchApp extends JFrame {
 			JOptionPane.showMessageDialog(this, "Error: " + exc, "Error", JOptionPane.ERROR_MESSAGE);
 		}
 
-		setTitle("Overdue Search App");
+		setTitle("Overdue Search Tool");
 		setBounds(100, 100, 708, 393);
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -78,7 +83,7 @@ public class OverdueSearchApp extends JFrame {
 
 		EmailAddTextField = new JTextField();
 		panel.add(EmailAddTextField);
-		EmailAddTextField.setColumns(10);
+		EmailAddTextField.setColumns(30);
 
 		List<OverDue> alldueees = overDueDAO.getAllOverDue();
 		OverdueTableModel initialModel = new OverdueTableModel(alldueees);
@@ -91,7 +96,7 @@ public class OverdueSearchApp extends JFrame {
 
 				// Call DAO and get Member for the Email
 
-				// If Email is empty, then get all Memebrs
+				// If Email is empty, then get all Membrs
 
 				// Print out Member
 
