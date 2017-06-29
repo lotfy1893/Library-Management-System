@@ -1,8 +1,10 @@
 /**
- *
  * 
- *
+ * @author Bassem E-Hamedy
+ * @version : V 3
+ * OverDue object class created to have an object of over view to hold the Overdue members 
  */
+
 public class OverDue {
 
 	private int overdueDays;
@@ -71,7 +73,11 @@ public class OverDue {
 		this.returnDate = returnDate;
 	}
 
-	@Override
+	/**
+	 * @Override
+	 * Returns a formatted Overdue Object using the below sequence
+	 */
+	
 	public String toString() {
 		return String.format(
 				"Overdue [overdueDays=%s, email=%s, bookName=%s, entryDate=%s, BorrowDate=%s, returnDate=%s]",

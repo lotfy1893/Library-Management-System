@@ -18,7 +18,12 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.TableCellRenderer;
-
+/**
+ * 
+ * @author Bassem E-Hamed
+ * @version 3
+ *
+ */
 @SuppressWarnings("serial")
 public class OverdueSearchApp extends JFrame {
 
@@ -91,7 +96,7 @@ public class OverdueSearchApp extends JFrame {
 
 				// Call DAO and get Member for the Email
 
-				// If Email is empty, then get all Memebrs
+				// If Email is empty, then get all Membrs
 
 				// Print out Member
 

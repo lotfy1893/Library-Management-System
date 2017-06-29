@@ -9,14 +9,18 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- *
  * 
- *
+ * @author Bassem E-Hamedy
+ * @version : V 3
+ * OverDueDAO (Data Access Object) Helper Class created to connect to the database and run the SQL queries 
  */
 public class OverDueDAO {
 
 	private Connection myConn;
-
+/**
+ * Read the database properties and make an actual connection to the database
+ * @throws Exception
+ */
 	public OverDueDAO() throws Exception {
 
 		// get db properties
@@ -34,7 +38,7 @@ public class OverDueDAO {
 
 	/**
 	 * 
-	 * @return List of
+	 * @return List of all members who has books
 	 * @throws Exception
 	 */
 	public List<OverDue> getAllOverDue() throws Exception {
@@ -58,7 +62,12 @@ public class OverDueDAO {
 			close(myStmt, myRs);
 		}
 	}
-
+/**
+ * 
+ * @param email of the required member
+ * @return list of books borrowed by specific members 
+ * @throws Exception
+ */
 	public List<OverDue> searchOverDue(String email) throws Exception {
 		List<OverDue> list = new ArrayList<>();
 
@@ -92,7 +101,12 @@ public class OverDueDAO {
 			close(myStmt, myRs);
 		}
 	}
-
+/**
+ * 
+ * @param myRs
+ * @return this method converts the selected rows to OverDue Object 
+ * @throws SQLException
+ */
 	private OverDue convertRowToOverDue(ResultSet myRs) throws SQLException {
 
 		int overdueDays = myRs.getInt("overdueDays");
@@ -108,6 +122,13 @@ public class OverDueDAO {
 	}
 	// (overdueDays, email, bookName, entryDate, BorrowDate,returnDate)
 
+	/**
+	 * close the connection with the database
+	 * @param myConn
+	 * @param myStmt
+	 * @param myRs
+	 * @throws SQLException
+	 */
 	private static void close(Connection myConn, Statement myStmt, ResultSet myRs) throws SQLException {
 
 		if (myRs != null) {
@@ -126,7 +147,11 @@ public class OverDueDAO {
 	private void close(Statement myStmt, ResultSet myRs) throws SQLException {
 		close(null, myStmt, myRs);
 	}
-
+/**
+ * created to test the functionality of the methods 
+ * @param args
+ * @throws Exception
+ */
 	public static void main(String[] args) throws Exception {
 
 		OverDueDAO dao = new OverDueDAO();

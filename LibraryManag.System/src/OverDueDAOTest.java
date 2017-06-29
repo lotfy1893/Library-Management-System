@@ -19,7 +19,8 @@ import org.junit.Test;
  */
 
 /**
- * @author apple2
+ * @author Bassem E-Hamed
+ * @version 3
  *
  */
 public class OverDueDAOTest {
