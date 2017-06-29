@@ -93,8 +93,16 @@ public class BookRepository {
 	public ArrayList<Book> searchForABook(String title, String author, String category)
 			throws SQLException, ParseException {
 		Statement myStmt = myConn.createStatement();
-		ResultSet stringQuery = myStmt.executeQuery("select * from book where book_name like '" + title
-				+ "%' and author like '" + author + "%' and category like '" + category + "%'");
+		ResultSet stringQuery = null;
+
+		if (title.length() > 1 || author.length() > 1 || category.length() > 1) {
+			stringQuery = myStmt.executeQuery("select * from book where book_name like '%" + title
+					+ "%' and author like '%" + author + "%' and category like '%" + category + "%'");
+		} else {
+			stringQuery = myStmt.executeQuery("select * from book where book_name like '" + title
+					+ "%' and author like '" + author + "%' and category like '" + category + "%'");
+		}
+
 		ArrayList<Book> result = new ArrayList<>();
 		while (stringQuery.next()) {
 			String name = stringQuery.getString("book_name");

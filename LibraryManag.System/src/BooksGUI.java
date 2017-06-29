@@ -454,7 +454,7 @@ public class BooksGUI extends JPanel {
 		lblSearchByAuthor.setBounds(64, 89, 139, 14);
 		add(lblSearchByAuthor);
 
-		lblSearchByBook = new JLabel("Search by Book");
+		lblSearchByBook = new JLabel("Search by Book Name");
 		lblSearchByBook.setForeground(Color.GREEN);
 		lblSearchByBook.setFont(new Font("Tahoma", Font.BOLD, 12));
 		lblSearchByBook.setBounds(64, 57, 139, 14);
